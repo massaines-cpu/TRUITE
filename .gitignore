@@ -1,0 +1,27 @@
+Python
+pycache/
+*.pyc
+*.pyo
+*.pyd
+
+Django
+*.log
+db.sqlite3
+media/
+staticfiles/
+
+Environment
+.env
+.venv/
+venv/
+
+IDE
+.vscode/
+.idea/
+
+OS
+.DS_Store
+Thumbs.db
+
+Migrations cache
+*/migrations/pycache/
