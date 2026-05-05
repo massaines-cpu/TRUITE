@@ -1,0 +1,96 @@
+body {
+      font-family: sans-serif;
+      max-width: 500px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      color: #1a1a1a;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .field {
+      margin-bottom: 1rem;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+      color: #444;
+    }
+
+    .field input[type="text"],
+    .field input[type="password"],
+    .field input[type="email"],
+    .field input[type="date"],
+    .field input[type="file"] {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .field input[type="file"] {
+      padding: 6px 0;
+      border: none;
+    }
+
+    .gender-row {
+      display: flex;
+      gap: 1.5rem;
+      padding: 6px 0;
+    }
+
+    .gender-row label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.95rem;
+      color: #1a1a1a;
+      cursor: pointer;
+    }
+
+    .hint {
+      font-size: 0.78rem;
+      color: #888;
+      margin-top: 3px;
+    }
+
+    .req {
+      color: #c0392b;
+    }
+
+    #passw-msg {
+      font-size: 0.8rem;
+      color: #c0392b;
+      margin-top: 4px;
+      display: none;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #e5e5e5;
+      margin: 1.5rem 0;
+    }
+
+    input[type="submit"] {
+      width: 100%;
+      margin-top: 1.5rem;
+      padding: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      background: #1a1a1a;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+      opacity: 0.85;
+    }

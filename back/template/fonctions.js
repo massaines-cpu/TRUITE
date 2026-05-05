@@ -1,23 +1,25 @@
-('#passw, #conf_passw').on('keyup', function () {
+$('#passw, #conf_passw').on('keyup', function () {
   if ($('#passw').val() == $('#conf_passw').val()) {
-    $('#message').html('Matching').css('color', 'green');
-  } else 
-    $('#message').html('Not Matching').css('color', 'red');
+    $('#message').html('Mots de passe identiques').css('color', 'green');
+  } else {
+    $('#message').html('Mots de passe différents').css('color', 'red');
+  }
 });
 
-function check_availability(){
+function check_availability() {
+  var username = $('#username').val();
 
-    var user_id = $('#username').val();
-
-    //use ajax????? to run the check
-    $.post("bdd.db", { user_id: user_id },
-        function(result){
-            //if the result is 1
-            if(result == 1){
-                $('...').html(user_id + ' is available');
-            }else{
-                $('...').html(user_id + ' is not available');
-            }
-        });
-
+  $.get('/check-username', { username: username }, function (result) {
+    if (result.available) {
+      $('#username-msg').html(username + ' est disponible').css('color', 'green');
+    } else {
+      $('#username-msg').html(username + ' est déjà pris').css('color', 'red');
+    }
+  });
 }
+
+$('#username').on('blur', function () {
+  if ($(this).val().length >= 4) {
+    check_availability();
+  }
+});

@@ -1,108 +1,121 @@
-<html>
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-<h1>Page d'inscription</h1>
-</head>
-<div>
+  <link rel="stylesheet" href="styles.css" />
+  </head>
+  <title>Page d'inscription</title>
 
-<label for="username">Nom d'utilisateur * &nbsp;:</label>
-<input
-  type="text"
-  id="username"
-  name="username"
-  required
-  minlength="4"
-  maxlength="10"
-  size="10" />
-</div>
-<br> </br>
-<div>
-<label for="passw">Mot de passe * &nbsp;:</label>
-<input
-  type="password"
-  id="passw"
-  name="passw"/>
-</div>
-<label for="conf_passw"> Confirmation mot de passe* &nbsp;:
-<input 
-type="password" 
-name="conf_passw" 
-id="conf_passw" />
-<span id='message'></span>
-</label>
+<body>
 
-<div>
-<label for="nom">Nom &nbsp;:</label>
-<input
-  type="text"
-  id="nom"
-  name="nom"
-  required
-  minlength="4"
-  maxlength="10"
-  size="10" />
-</div>
+  <h1>Page d'inscription</h1>
 
-<div>
-<label for="name">Prénom &nbsp;:</label>
-<input
-  type="text"
-  id="name"
-  name="name"
-  required
-  minlength="4"
-  maxlength="10"
-  size="10" />
-</div>
+  <form action="/register" method="post" enctype="multipart/form-data">
 
-<div>
-<form action="/submit-gender" method="post"></form>
-    <label for="male">Homme</label>
-            <input type="radio" id="male" name="gender" value="male">
-    <label for="female">Femme</label>
-            <input type="radio" id="female" name="gender" value="female">
-</div>
+    <div class="field">
+      <label for="username">Nom d'utilisateur <span class="req">*</span></label>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        required
+        minlength="4"
+        maxlength="10"
+        placeholder="4 à 10 caractères" />
+    </div>
 
-<label for="email">Adresse e-mail &nbsp;:</label>
-<input
-  type="email"
-  id="email"
-  name="courriel"
-  required
-  minlength="4"
-  maxlength="10"
-  size="10" />
-</div>
-<br> </br>
+    <div class="field">
+      <label for="passw">Mot de passe <span class="req">*</span></label>
+      <input
+        type="password"
+        id="passw"
+        name="passw"
+        required />
+    </div>
 
-<div>
-<label for="adresse">Adresse postale &nbsp;:</label>
-<input
-  type="text"
-  id="adresse"
-  name="adresse"
-  required
-  minlength="4"
-  maxlength="10"
-  size="10" />
-</div>
+    <div class="field">
+      <label for="conf_passw">Confirmation mot de passe <span class="req">*</span></label>
+      <input
+        type="password"
+        id="conf_passw"
+        name="conf_passw"
+        required />
+      <p id="passw-msg">Les mots de passe ne correspondent pas.</p>
+    </div>
 
-<div>
-<label for="date">Date d'anniversaire &nbsp;:</label>
-<input
-  type="date"
-  id="date"
-  name="naissance"
-  min="18"
-  required
-  minlength="4"
-  maxlength="10"
-  size="10" />
-</div>
-<br> </br>
-<div>
-<label class="header">Photo de profil:</label>     
-<input id="image" type="file" name="profile_photo" placeholder="Photo" required="" capture>
-</div>
-</div>
-<input name="nouveau" type="submit" value="s'inscrire" />
+    <hr />
+
+    <div class="field">
+      <label for="nom">Nom</label>
+      <input
+        type="text"
+        id="nom"
+        name="nom"
+        minlength="2"
+        maxlength="50" />
+    </div>
+
+    <div class="field">
+      <label for="prenom">Prénom</label>
+      <input
+        type="text"
+        id="prenom"
+        name="prenom"
+        minlength="2"
+        maxlength="50" />
+    </div>
+
+    <div class="field">
+      <label>Genre</label>
+      <div class="gender-row">
+        <label>
+          <input type="radio" id="male" name="gender" value="male" />
+          Homme
+        </label>
+        <label>
+          <input type="radio" id="female" name="gender" value="female" />
+          Femme
+        </label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="email">Adresse e-mail </label>
+      <input
+        type="email"
+        id="email"
+        name="courriel"
+         />
+    </div>
+
+    <div class="field">
+      <label for="adresse">Adresse postale</label>
+      <input
+        type="text"
+        id="adresse"
+        name="adresse" />
+    </div>
+
+    <div class="field">
+      <label for="date">Date de naissance </label>
+      <input
+        type="date"
+        id="date"
+        name="naissance"
+         />
+    </div>
+
+    <div class="field">
+      <label for="image">Photo de profil</label>
+      <input
+        type="file"
+        id="image"
+        name="profile_photo"
+        accept="image/*" />
+    </div>
+
+    <input type="submit" name="nouveau" value="S'inscrire" />
+
+  </form>
+
+</body>
 </html>
