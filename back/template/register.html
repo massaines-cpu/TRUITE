@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <link rel="stylesheet" href="styles.css" />
-  </head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <title>Page d'inscription</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="fonctions.js" defer></script>
+</head>
 
 <body>
 
@@ -105,13 +109,10 @@
     </div>
 
     <div class="field">
-      <label for="image">Photo de profil</label>
-      <input
-        type="file"
-        id="image"
-        name="profile_photo"
-        accept="image/*" />
-    </div>
+  <label for="image">Photo de profil</label>
+  <input type="file" id="image" name="profile_photo" accept="image/*" />
+  <img id="apercu" src="" alt="Aperçu" style="display:none; margin-top: 10px; width: 100px; height: 100px; object-fit: cover; border-radius: 50%; border: 1px solid #ccc;" />
+</div>
 
     <input type="submit" name="nouveau" value="S'inscrire" />
 

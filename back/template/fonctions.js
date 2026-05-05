@@ -23,3 +23,16 @@ $('#username').on('blur', function () {
     check_availability();
   }
 });
+
+document.getElementById('image').addEventListener('change', function() {
+  const fichier = this.files[0];
+  const apercu = document.getElementById('apercu');
+
+  if (fichier) {
+    apercu.src = URL.createObjectURL(fichier);
+    apercu.style.display = 'block';
+  } else {
+    apercu.src = '';
+    apercu.style.display = 'none';
+  }
+});
