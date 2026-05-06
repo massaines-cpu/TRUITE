@@ -1,19 +1,13 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <title>Page d'inscription</title>
-  <link rel="stylesheet" href="styles.css" />
-  <script src="fonctions.js" defer></script>
-</head>
+{% extends "base.html" %}
 
-<body>
+{% block title %}Page d'inscription{% endblock %}
+
+{% block content %}
 
   <h1>Page d'inscription</h1>
 
   <form action="/register" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
 
     <div class="field">
       <label for="username">Nom d'utilisateur <span class="req">*</span></label>
@@ -121,6 +115,4 @@
     <input type="submit" name="nouveau" value="S'inscrire" />
 
   </form>
-
-</body>
-</html>
+{% endblock %}
