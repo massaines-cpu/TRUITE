@@ -1,11 +1,12 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from drf_spectacular.utils import extend_schema
+
 from .serializers import UserSerializer
-from django.contrib.auth import get_user_model
 
-User = get_user_model()
 
+@extend_schema(request=UserSerializer, responses=UserSerializer)
 @api_view(["POST"])
 def register(request):
     serializer = UserSerializer(data=request.data)
@@ -17,12 +18,20 @@ def register(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-
-
+@extend_schema(
+    request={
+        "application/json": {
+            "type": "object",
+            "properties": {
+                "username": {"type": "string"},
+                "password": {"type": "string"},
+            },
+            "required": ["username", "password"],
+        }
+    }
+)
 @api_view(["POST"])
 def login(request):
-
     return Response({
         "message": "login route works"
     })
