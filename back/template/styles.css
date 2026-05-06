@@ -94,3 +94,13 @@ body {
     input[type="submit"]:hover {
       opacity: 0.85;
     }
+
+    .field #apercu {
+  display: none;
+  margin-top: 10px;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+}
