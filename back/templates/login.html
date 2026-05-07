@@ -1,23 +1,31 @@
 {% extends "base.html" %}
-{% block title %}Page de connexion {% endblock %}
+{% block title %}Page de connexion{% endblock %}
+
 {% block content %}
 
 <h1>Page de connexion</h1>
- 
-  <form action="{% url 'login' %}" method="post">
-    {% csrf_token %}
- 
-    <div class="field">
-      <label for="username">Nom d'utilisateur <span class="req">*</span></label>
-      <input type="text" id="username" name="username" required />
-    </div>
- 
-    <div class="field">
-      <label for="passw">Mot de passe <span class="req">*</span></label>
-      <input type="password" id="passw" name="passw" autocomplete="current-password" required />
-    </div>
- 
-    <input type="submit" value="Se connecter" />
- 
-  </form>
-  {% endblock %}
+
+<form id="login-form" action="/api/accounts/login/" method="post">
+  {% csrf_token %}
+
+  <div class="field">
+    <label for="username">Nom d'utilisateur <span class="req">*</span></label>
+    <input type="text" id="username" name="username" required />
+  </div>
+
+  <div class="field">
+    <label for="password_hash">Mot de passe <span class="req">*</span></label>
+    <input
+      type="password"
+      id="password_hash"
+      name="password_hash"
+      autocomplete="current-password"
+      required />
+  </div>
+
+  <p id="login-msg"></p>
+
+  <input type="submit" value="Se connecter" />
+</form>
+
+{% endblock %}

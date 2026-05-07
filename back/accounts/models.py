@@ -11,6 +11,7 @@ class User(models.Model):
     sex = models.CharField(max_length=20, blank=True, null=True) 
 
     profile_pic = models.ImageField(
+        blank=True, null=True,
         upload_to="profiles/",
         default="profiles/default.png"
     )
