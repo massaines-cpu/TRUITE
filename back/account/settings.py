@@ -32,7 +32,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "truite-a5qjbdc8fkesdeh7.francecentral-01.azurewebsites.net",
+    "truite-a5gjbdc8fkesdeh7.francecentral-01.azurewebsites.net",
 ]
 
 
