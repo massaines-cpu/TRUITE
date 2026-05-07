@@ -2,10 +2,9 @@
 name: Build, Push to DockerHub and Deploy to Azure Web App
 
 env:
-  DOCKERHUB_IMAGE_BACK: ${{ secrets.DOCKER_USERNAME }}/iris_back
-  DOCKERHUB_IMAGE_FRONT: ${{ secrets.DOCKER_USERNAME }}/iris_front
+  DOCKERHUB_IMAGE_BACK: ${{ secrets.DOCKER_USERNAME }}/truite
+
   AZURE_WEBAPP_BACK: Irispredictionback2
-  AZURE_WEBAPP_FRONT: irisfront2
 
 on:
   push:
