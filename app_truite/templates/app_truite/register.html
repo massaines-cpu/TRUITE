@@ -1,0 +1,120 @@
+{% extends "app_truite/base.html" %}
+
+{% block title %}Page d'inscription{% endblock %}
+
+{% block content %}
+
+  <h1>Page d'inscription</h1>
+
+  <form action="/register" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="field">
+      <label for="username">Nom d'utilisateur <span class="req">*</span></label>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        required
+        minlength="4"
+        maxlength="10"
+        placeholder="4 à 10 caractères" />
+    </div>
+
+    <div class="field">
+      <label for="passw">Mot de passe <span class="req">*</span></label>
+      <input
+        type="password"
+        id="passw"
+        name="passw"
+        placeholder="10 caractères"
+        required />
+    </div>
+
+    <div class="field">
+      <label for="conf_passw">Confirmation mot de passe <span class="req">*</span></label>
+      <input
+        type="password"
+        id="conf_passw"
+        name="conf_passw"
+        placeholder="10 caractères"
+        required />
+      <p id="passw-msg">Les mots de passe ne correspondent pas.</p>
+    </div>
+
+    <hr />
+
+    <div class="field">
+      <label for="nom">Nom</label>
+      <input
+        type="text"
+        id="nom"
+        name="nom"
+        minlength="2"
+        maxlength="50" />
+    </div>
+
+    <div class="field">
+      <label for="prenom">Prénom</label>
+      <input
+        type="text"
+        id="prenom"
+        name="prenom"
+        minlength="2"
+        maxlength="50" />
+    </div>
+
+    <div class="field">
+      <label>Genre</label>
+      <div class="gender-row">
+        <label>
+          <input type="radio" id="male" name="gender" value="male" />
+          Homme
+        </label>
+        <label>
+          <input type="radio" id="female" name="gender" value="female" />
+          Femme
+        </label>
+        <label>
+          <input type="radio" id="NB" name="gender" value="NB" />
+          Il est hors de question que je vous le dise
+        </label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="email">Adresse e-mail </label>
+      <input
+        type="email"
+        id="email"
+        name="courriel"
+         />
+    </div>
+
+    <div class="field">
+      <label for="adresse">Adresse postale</label>
+      <input
+        type="text"
+        id="adresse"
+        name="adresse" />
+    </div>
+
+    <div class="field">
+      <label for="date">Date de naissance </label>
+      <input
+        type="date"
+        id="date"
+        name="naissance"
+         />
+    </div>
+
+    <div class="field">
+  <label for="image">Photo de profil</label>
+  <input type="file" id="image" name="profile_photo" accept="image/*" />
+  <img id="apercu" src="" alt="Aperçu" />
+</div>
+
+    <input type="submit" name="nouveau" value="S'inscrire" />
+
+  </form>
+{% endblock %}
