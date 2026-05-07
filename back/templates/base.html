@@ -1,9 +1,37 @@
-<h1>Truite</h1>
+{% load static %}
 
-<h3>comming soon</h3>
+<!DOCTYPE html>
 
-<h5>Created By</h5>
+<html lang="fr">
 
+<head>
 
+    <meta charset="UTF-8">
 
-<a href="/login/">Login</a
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}
+            Truitr
+        {% endblock %}
+    </title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!-- JavaScript -->
+    <script src="{% static 'app.js' %}" defer></script>
+
+</head>
+
+<body>
+
+    {% block content %}
+    {% endblock %}
+
+</body>
+
+</html>
