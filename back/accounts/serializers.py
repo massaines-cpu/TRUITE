@@ -5,7 +5,7 @@ from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
-    password_hash = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
@@ -13,7 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
             "id",
             "username",
             "email",
-            "password_hash",
+            "password",
             "sex",
             "profile_pic",
             "first_name",
@@ -22,9 +22,9 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        validated_data["password_hash"] = make_password(validated_data["password_hash"])
+        validated_data["password"] = make_password(validated_data["password"])
         return User.objects.create(**validated_data)
     
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
-    password_hash = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True)

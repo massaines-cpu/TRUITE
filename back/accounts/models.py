@@ -6,7 +6,7 @@ class User(models.Model):
     username = models.CharField(max_length=100, unique=True) 
     email = models.EmailField(unique=True)
 
-    password_hash = models.CharField(max_length=255)
+    password = models.CharField(max_length=255)
 
     sex = models.CharField(max_length=20, blank=True, null=True) 
 
