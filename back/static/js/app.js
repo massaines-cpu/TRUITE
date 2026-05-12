@@ -1,7 +1,7 @@
 // js register.html
 
-$('#password_hash, #conf_passw').on('keyup', function () {
-  if ($('#password_hash').val() == $('#conf_passw').val()) {
+$('#password, #conf_passw').on('keyup', function () {
+  if ($('#password').val() == $('#conf_passw').val()) {
     $('#passw-msg')
       .html('Mots de passe identiques')
       .css('color', 'green');
@@ -39,15 +39,12 @@ $('form').on('submit', function (e) {
 
     success: function (response) {
       alert('Inscription réussie !');
-
       console.log(response);
-
       window.location.href = '/login/';
     },
 
     error: function (xhr) {
       console.log(xhr.responseJSON);
-
       alert('Erreur lors de l’inscription');
     }
   });
@@ -61,7 +58,7 @@ $('#login-form').on('submit', function (e) {
 
   const formData = {
     username: $('#username').val(),
-    password_hash: $('#password_hash').val()
+    password: $('#password').val()
   };
 
   $.ajax({

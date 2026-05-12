@@ -20,7 +20,6 @@ def register_page(request):
 
 
 @extend_schema(request=UserSerializer, responses=UserSerializer)
-@extend_schema(request=LoginSerializer)
 @api_view(["POST"])
 def register(request):
     serializer = UserSerializer(data=request.data)
@@ -49,11 +48,11 @@ def register(request):
 @api_view(["POST"])
 def login(request):
     username = request.data.get("username")
-    password_hash = request.data.get("password_hash")
+    password = request.data.get("password")
 
-    if not username or not password_hash:
+    if not username or not password:
         return Response(
-            {"error": "username and password_hash are required"},
+            {"error": "username and password are required"},
             status=status.HTTP_400_BAD_REQUEST
         )
 
@@ -65,7 +64,7 @@ def login(request):
             status=status.HTTP_401_UNAUTHORIZED
         )
 
-    if not check_password(password_hash, user.password_hash):
+    if not check_password(password, user.password):
         return Response(
             {"error": "Invalid username or password"},
             status=status.HTTP_401_UNAUTHORIZED
