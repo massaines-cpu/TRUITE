@@ -1,4 +1,6 @@
 
+from datetime import timezone
+
 from django.db import models
 
 
@@ -25,3 +27,6 @@ class Localisation(models.Model):
     #user = models.ManyToOneRel(User, on_delete=models.CASCADE)
     longitude = models.FloatField()
     latitude = models.FloatField()
+    date = models.DateTimeField(auto_now_add=True)
+
+

@@ -90,6 +90,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'truite.wsgi.application'
 
+REST_FRAMEWORK = {
+    'DATETIME_FORMAT': '%s000',
+}
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
