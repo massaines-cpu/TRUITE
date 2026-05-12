@@ -1,9 +1,13 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block title %}Page d'inscription{% endblock %}
 
-{% block content %}
+{% block head%}
+  <script src="{% static '../static/js/app.js' %}" defer></script>
+  <script src="{% static '../static/js/inscription.js' %}" defer></script>
+{% endblock %}
 
+{% block content %}
   <h1>Page d'inscription</h1>
 
   <form action="/api/accounts/register/" method="post" enctype="multipart/form-data">

@@ -79,3 +79,5 @@ def login(request):
             "email": user.email
         }
     })
+# latitude = request.data.get('latitude', None)
+# longitude = request.data.get('longitude', None)

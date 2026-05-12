@@ -20,3 +20,8 @@ class User(models.Model):
     last_name = models.CharField(max_length=100) 
 
     birth_date = models.DateField(blank=True, null=True)
+
+class Localisation(models.Model):
+    #user = models.ManyToOneRel(User, on_delete=models.CASCADE)
+    longitude = models.FloatField()
+    latitude = models.FloatField()
