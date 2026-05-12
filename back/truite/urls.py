@@ -2,8 +2,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 from accounts.views import login_page, register_page
+from truite.views import recup_geoloc
 
 urlpatterns = [
     path("admin/", admin.site.urls),
