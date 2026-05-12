@@ -24,21 +24,31 @@ load_dotenv()
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5pq9$*kp*(1^p40vkek&56@x)-n((4n0=@k%khvm_r++)+^^vc'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "169.254.130.2",
     "localhost",
-    "truite-a5gjbdc8fkesdeh7.francecentral-01.azurewebsites.net",
+    "127.0.0.1",
+    ".azurewebsites.net",
+    ".onrender.com",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.azurewebsites.net",
+    "https://*.onrender.com",
 ]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'blockchain',
+    'follows',
+    'reactions',
+    'posts',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -61,7 +71,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'account.urls'
+ROOT_URLCONF = 'truite.urls'
 
 TEMPLATES = [
     {
@@ -78,7 +88,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'account.wsgi.application'
+WSGI_APPLICATION = 'truite.wsgi.application'
 
 
 # Database
