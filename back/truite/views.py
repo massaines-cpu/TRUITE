@@ -1,28 +1,32 @@
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
-import json
-from django.views.decorators.csrf import csrf_exempt
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import authentication_classes, permission_classes
 
 from accounts.models import Localisation
 
 
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 
-def home(request):
-    return render(request, 'base.html')
-
-def login(request):
-    return render(request, 'login.html')
-
-def register(request):
-    return render(request, 'register.html')
-
-@csrf_exempt
 def recup_geoloc(request):
-    data = json.loads(request.body)
-    print("data", data)
-    loc = Localisation(longitude=data["longitude"], 
-                       latitude=data['latitude'])
-    print("loc", loc)
-    print(loc.longitude)
-    loc.save()
-    return JsonResponse({})
+
+    print('user', request.user)
+    print('token', request.auth)
+    print("data", request.data)
+
+    latitude = request.data.get("latitude")
+    longitude = request.data.get("longitude")
+
+    loc = Localisation.objects.create(
+        user=request.user,
+        latitude=latitude,
+        longitude=longitude
+    )
+
+    return Response({
+        "message": "OK",
+        "id": loc.id
+    })

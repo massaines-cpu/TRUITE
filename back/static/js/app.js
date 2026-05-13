@@ -1,86 +1,109 @@
-// js register.html
+if ($('#password').length && $('#conf_passw').length) {
 
-$('#password, #conf_passw').on('keyup', function () {
-  if ($('#password').val() == $('#conf_passw').val()) {
-    $('#passw-msg')
-      .html('Mots de passe identiques')
-      .css('color', 'green');
-  } else {
-    $('#passw-msg')
-      .html('Mots de passe différents')
-      .css('color', 'red');
-  }
-});
+  $('#password, #conf_passw').on('keyup', function () {
 
-document.getElementById('image').addEventListener('change', function () {
-  const fichier = this.files[0];
-  const apercu = document.getElementById('apercu');
+    if ($('#password').val() === $('#conf_passw').val()) {
+      $('#message').html('Mots de passe identiques').css('color', 'green');
+    } else {
+      $('#message').html('Mots de passe différents').css('color', 'red');
+    }
 
-  if (fichier) {
-    apercu.src = URL.createObjectURL(fichier);
-    apercu.style.display = 'block';
-  } else {
-    apercu.src = '';
-    apercu.style.display = 'none';
-  }
-});
+  });
 
-$('form').on('submit', function (e) {
-  e.preventDefault();
+}
 
-  const formData = new FormData(this);
+function check_availability() {
 
-  $.ajax({
-    url: '/api/accounts/register/',
-    type: 'POST',
-    data: formData,
-    processData: false,
-    contentType: false,
+  const username = $('#username').val();
 
-    success: function (response) {
-      alert('Inscription réussie !');
-      console.log(response);
-      window.location.href = '/login/';
-    },
+  if (!username) return;
 
-    error: function (xhr) {
-      console.log(xhr.responseJSON);
-      alert('Erreur lors de l’inscription');
+  $.get('/check-username', { username: username }, function (result) {
+
+    if (result.available) {
+      $('#username-msg').html(username + ' est disponible').css('color', 'green');
+    } else {
+      $('#username-msg').html(username + ' est déjà pris').css('color', 'red');
+    }
+
+  });
+
+}
+
+if ($('#username').length) {
+
+  $('#username').on('blur', function () {
+    if ($(this).val().length >= 4) {
+      check_availability();
     }
   });
-});
 
+}
 
-// js login.html
+const image = document.getElementById('image');
 
-$('#login-form').on('submit', function (e) {
-  e.preventDefault();
+if (image) {
 
-  const formData = {
-    username: $('#username').val(),
-    password: $('#password').val()
-  };
+  image.addEventListener('change', function () {
 
-  $.ajax({
-    url: '/api/accounts/login/',
-    type: 'POST',
-    contentType: 'application/json',
-    data: JSON.stringify(formData),
+    const fichier = this.files[0];
+    const apercu = document.getElementById('apercu');
 
-    success: function (response) {
-      $('#login-msg')
-        .html('Connexion réussie !')
-        .css('color', 'green');
+    if (apercu) {
 
-      console.log(response);
-    },
+      if (fichier) {
+        apercu.src = URL.createObjectURL(fichier);
+        apercu.style.display = 'block';
+      } else {
+        apercu.src = '';
+        apercu.style.display = 'none';
+      }
 
-    error: function (xhr) {
-      $('#login-msg')
-        .html('Nom d’utilisateur ou mot de passe incorrect')
-        .css('color', 'red');
-
-      console.log(xhr.responseJSON);
     }
+
   });
-});
+
+}
+if ($('#login-form').length) {
+
+  $('#login-form').on('submit', function (e) {
+
+    e.preventDefault();
+
+    const formData = {
+      username: $('#username').val(),
+      password: $('#password').val()
+    };
+
+    $.ajax({
+
+      url: '/api/accounts/login/',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(formData),
+
+      success: function (response) {
+
+  console.log("LOGIN SUCCESS");
+
+  console.log("TOKEN =", response.token);
+
+  envoyerGeoloc(response.token);
+
+},
+
+      error: function (xhr) {
+
+        console.log("LOGIN ERROR", xhr);
+
+        $('#login-msg')
+          .html('Identifiants incorrects')
+          .css('color', 'red');
+
+      }
+
+    });
+
+  });
+
+}

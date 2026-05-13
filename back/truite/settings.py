@@ -56,9 +56,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'drf_spectacular',
-    "rest_framework",
-    "accounts",
-
+    'rest_framework',
+    'rest_framework.authtoken',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -89,10 +89,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'truite.wsgi.application'
-
-REST_FRAMEWORK = {
-    'DATETIME_FORMAT': '%s000',
-}
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
@@ -160,8 +156,13 @@ STATICFILES_DIRS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DATETIME_FORMAT': '%s000',
 }
 
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+AUTH_USER_MODEL = 'accounts.User'

@@ -13,7 +13,7 @@ urlpatterns = [
     # HTML pages
     path("login/", login_page, name="login_page"),
     path("register/", register_page, name="register_page"),
-    path('recup-location', recup_geoloc, name='recup geoloc'),
+    path('recup-location/', recup_geoloc, name='recup geoloc'),    
 
     # APIs
     path("api/accounts/", include("accounts.urls")),

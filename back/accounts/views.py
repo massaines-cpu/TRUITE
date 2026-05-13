@@ -4,6 +4,8 @@ from rest_framework import status
 from drf_spectacular.utils import extend_schema
 from .models import User
 from django.contrib.auth.hashers import check_password
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import authenticate
 
 
 from .serializers import UserSerializer, LoginSerializer
@@ -56,27 +58,22 @@ def login(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    try:
-        user = User.objects.get(username=username)
-    except User.DoesNotExist:
+    user = authenticate(request, username=username, password=password)
+
+    if user is None:
         return Response(
             {"error": "Invalid username or password"},
             status=status.HTTP_401_UNAUTHORIZED
         )
 
-    if not check_password(password, user.password):
-        return Response(
-            {"error": "Invalid username or password"},
-            status=status.HTTP_401_UNAUTHORIZED
-        )
+    token, created = Token.objects.get_or_create(user=user)
 
     return Response({
         "message": "Login successful",
+        "token": token.key,
         "user": {
             "id": user.id,
             "username": user.username,
             "email": user.email
         }
     })
-# latitude = request.data.get('latitude', None)
-# longitude = request.data.get('longitude', None)

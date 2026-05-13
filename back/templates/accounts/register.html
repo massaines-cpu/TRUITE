@@ -3,14 +3,13 @@
 {% block title %}Page d'inscription{% endblock %}
 
 {% block head%}
-  <script src="{% static '../static/js/app.js' %}" defer></script>
-  <script src="{% static '../static/js/inscription.js' %}" defer></script>
+  <script src="{% static 'js/app.js' %}" defer></script>
 {% endblock %}
 
 {% block content %}
   <h1>Page d'inscription</h1>
 
-  <form action="/api/accounts/register/" method="post" enctype="multipart/form-data">
+  <form id="register-form" method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
     <div class="field">
@@ -21,8 +20,8 @@
         name="username"
         required
         minlength="4"
-        maxlength="10"
-        placeholder="4 à 10 caractères" />
+        maxlength="15"
+        placeholder="4 à 15 caractères" />
     </div>
 
     <div class="field">
@@ -31,7 +30,7 @@
         type="password"
         id="password"
         name="password"
-        placeholder="10 caractères"
+        placeholder="8 caractères mini"
         required />
     </div>
 
@@ -41,7 +40,7 @@
         type="password"
         id="conf_passw"
         name="conf_passw"
-        placeholder="10 caractères"
+        placeholder="8 caractères mini"
         required />
       <p id="passw-msg">Les mots de passe ne correspondent pas.</p>
     </div>

@@ -1,39 +1,28 @@
 {% load static %}
 
 <!DOCTYPE html>
-
 <html lang="fr">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>
-        {% block title %}
-            Truitr
-        {% endblock %}
-    </title>
+    <title>{% block title %}Truite{% endblock %}</title>
 
-    <!-- CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <script src="{% static '../static/js/geoloc.js' %}" defer></script>
 
     <!-- jQuery -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-    <!-- JavaScript -->
+    <!-- JS GLOBAL -->
     <script src="{% static 'js/app.js' %}" defer></script>
-    <script src="{% static 'js/inscription.js' %}" defer></script>
-{% block head %}{% endblock %}
+    <script src="{% static 'js/geoloc.js' %}" defer></script>
+
+    {% block head %}{% endblock %}
 </head>
 
 <body>
-
-    {% block content %}
-    {% endblock %}
-
+    {% block content %}{% endblock %}
 </body>
 
 </html>
