@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load static %}
+
 {% block title %}Page de connexion{% endblock %}
 
 {% block content %}
@@ -29,3 +31,7 @@
 </form>
 
 {% endblock %}
+{% block scripts %}
+<script src="{% static 'js/app.js' %}" defer></script>
+{% endblock %}
+

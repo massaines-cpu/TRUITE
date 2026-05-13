@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.validators import MaxLengthValidator
+from django.core.exceptions import ValidationError
 
 
 class User(models.Model):
@@ -31,3 +33,48 @@ class User(models.Model):
                 self.profile_pic = "profiles/default-male-avatar.png"
 
         super().save(*args, **kwargs)
+
+
+
+
+
+def validate_image_size(image):
+    max_size = 2 * 1024 * 1024  # 2MB
+    if image.size > max_size:
+        raise ValidationError("Image trop lourde (max 2MB)")
+
+
+class Content(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="posts"
+    )
+
+    content = models.TextField(
+        validators=[MaxLengthValidator(2000)]
+    )
+
+    image = models.ImageField(
+        upload_to='posts/',
+        null=True,
+        blank=True,
+        validators=[validate_image_size]
+    )
+
+    likes = models.ManyToManyField(
+        User,
+        related_name="liked_posts",
+        blank=True
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Post de {self.user.username} ({self.id})"
+
+    def total_likes(self):
+        return self.likes.count()        

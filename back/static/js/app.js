@@ -1,31 +1,4 @@
-// js register.html
-
-$('#password, #conf_passw').on('keyup', function () {
-  if ($('#password').val() == $('#conf_passw').val()) {
-    $('#passw-msg')
-      .html('Mots de passe identiques')
-      .css('color', 'green');
-  } else {
-    $('#passw-msg')
-      .html('Mots de passe différents')
-      .css('color', 'red');
-  }
-});
-
-document.getElementById('image').addEventListener('change', function () {
-  const fichier = this.files[0];
-  const apercu = document.getElementById('apercu');
-
-  if (fichier) {
-    apercu.src = URL.createObjectURL(fichier);
-    apercu.style.display = 'block';
-  } else {
-    apercu.src = '';
-    apercu.style.display = 'none';
-  }
-});
-
-$('form').on('submit', function (e) {
+$('#register-form').on('submit', function (e) {
   e.preventDefault();
 
   const formData = new FormData(this);
@@ -38,9 +11,9 @@ $('form').on('submit', function (e) {
     contentType: false,
 
     success: function (response) {
-      alert('Inscription réussie !');
+      localStorage.setItem("user_id", response.id);
       console.log(response);
-      window.location.href = '/login/';
+      window.location.href = "/profile/";
     },
 
     error: function (xhr) {
@@ -50,8 +23,6 @@ $('form').on('submit', function (e) {
   });
 });
 
-
-// js login.html
 
 $('#login-form').on('submit', function (e) {
   e.preventDefault();
@@ -68,11 +39,9 @@ $('#login-form').on('submit', function (e) {
     data: JSON.stringify(formData),
 
     success: function (response) {
-      $('#login-msg')
-        .html('Connexion réussie !')
-        .css('color', 'green');
-
+      localStorage.setItem("user_id", response.user.id);
       console.log(response);
+      window.location.href = "/profile/";
     },
 
     error: function (xhr) {

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Profil{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<main class="profile-page">
+
+    <section class="profile-card">
+
+        <div class="profile-cover"></div>
+
+        <div class="profile-header">
+            <img id="profile-img" class="profile-avatar" src="" alt="Photo de profil">
+
+            <div class="profile-main-info">
+                <h1 id="user-fullname">Chargement...</h1>
+                <p id="user-handle">@username</p>
+            </div>
+        </div>
+
+        <div class="profile-grid">
+
+            <section class="profile-section">
+                <h2>Informations</h2>
+
+                <div class="info-row">
+                    <span>Email</span>
+                    <strong id="user-email">—</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Genre</span>
+                    <strong id="user-sex">—</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Date de naissance</span>
+                    <strong id="user-birthdate">—</strong>
+                </div>
+            </section>
+
+        </div>
+
+        <section class="profile-section">
+            <h2>Activité</h2>
+
+            <div class="stats">
+                <div>
+                    <strong>0</strong>
+                    <span>Posts</span>
+                </div>
+
+                <div>
+                    <strong>0</strong>
+                    <span>Abonnés</span>
+                </div>
+
+                <div>
+                    <strong>0</strong>
+                    <span>Suivis</span>
+                </div>
+            </div>
+        </section>
+
+    </section>
+
+</main>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/profile.js' %}"></script>
+{% endblock %}

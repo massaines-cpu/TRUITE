@@ -1,14 +1,15 @@
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.hashers import check_password
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import extend_schema
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+
+
 from .models import User
-from django.contrib.auth.hashers import check_password
-
-
-from .serializers import UserSerializer, LoginSerializer
-
-from django.shortcuts import render
+from .serializers import UserSerializer
 
 
 def login_page(request):
@@ -17,6 +18,10 @@ def login_page(request):
 
 def register_page(request):
     return render(request, "accounts/register.html")
+
+
+def profile_page(request):
+    return render(request, "accounts/profile.html")
 
 
 @extend_schema(request=UserSerializer, responses=UserSerializer)
@@ -29,20 +34,6 @@ def register(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@extend_schema(
-    request={
-        "application/json": {
-            "type": "object",
-            "properties": {
-                "username": {"type": "string"},
-                "password": {"type": "string"},
-            },
-            "required": ["username", "password"],
-        }
-    }
-)
 
 
 @api_view(["POST"])
@@ -72,9 +63,21 @@ def login(request):
 
     return Response({
         "message": "Login successful",
-        "user": {
-            "id": user.id,
-            "username": user.username,
-            "email": user.email
-        }
+        "user": UserSerializer(user).data
     })
+
+
+@api_view(["GET"])
+def profile(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    return Response(UserSerializer(user).data)
+
+
+@api_view(["GET"])
+def public_profile(request, username):
+    user = get_object_or_404(User, username=username)
+    return Response(UserSerializer(user).data)
+
+def logout_view(request):
+    logout(request)
+    return redirect("login_page")

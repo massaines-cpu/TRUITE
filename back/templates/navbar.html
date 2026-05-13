@@ -1,0 +1,17 @@
+<!-- templates/navbar/navbar.html -->
+<nav>
+
+  {% if user.is_authenticated %}
+    <a href="{% url 'profile' %}">Profil</a>
+    
+  {% else %}
+    <a href="{% url 'login_page' %}">Connexion</a>
+    <a href="{% url 'register_page' %}">Inscription</a>
+
+    <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button type="submit">Déconnexion</button>
+    </form>
+    
+  {% endif %}
+</nav>

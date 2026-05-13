@@ -1,0 +1,144 @@
+.profile-page {
+    min-height: 100vh;
+    background: #f4f6f8;
+    padding: 40px 20px;
+    font-family: Arial, sans-serif;
+}
+
+.profile-card {
+    max-width: 900px;
+    margin: auto;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .08);
+}
+
+.profile-cover {
+    height: 180px;
+    background: linear-gradient(135deg, #1f2937, #2563eb);
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 0 40px 30px;
+    margin-top: -55px;
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 5px solid white;
+    object-fit: cover;
+    background: white;
+}
+
+.profile-main-info h1 {
+    margin: 55px 0 5px;
+    font-size: 32px;
+    color: #111827;
+}
+
+.profile-main-info p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 16px;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 0 40px 30px;
+}
+
+.profile-section {
+    padding: 24px;
+    margin: 0 40px 30px;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    background: #ffffff;
+}
+
+.profile-grid .profile-section {
+    margin: 0;
+}
+
+.profile-section h2 {
+    margin-top: 0;
+    color: #111827;
+    font-size: 20px;
+}
+
+.profile-section p {
+    color: #374151;
+    line-height: 1.6;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-row span {
+    color: #6b7280;
+}
+
+.info-row strong {
+    color: #111827;
+    text-align: right;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.stats div {
+    text-align: center;
+    padding: 20px;
+    border-radius: 14px;
+    background: #f9fafb;
+}
+
+.stats strong {
+    display: block;
+    font-size: 28px;
+    color: #2563eb;
+}
+
+.stats span {
+    color: #6b7280;
+}
+
+@media (max-width: 700px) {
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 0 20px 30px;
+    }
+
+    .profile-main-info h1 {
+        margin-top: 0;
+    }
+
+    .profile-grid {
+        grid-template-columns: 1fr;
+        padding: 0 20px 30px;
+    }
+
+    .profile-section {
+        margin: 0 20px 30px;
+    }
+}
