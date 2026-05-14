@@ -5,33 +5,37 @@
 
 {% block content %}
 
-<h1>Page de connexion</h1>
+<main class="auth-page">
+  <h1>Page de connexion</h1>
 
-<form id="login-form" action="/api/accounts/login/" method="post">
-  {% csrf_token %}
+  <form id="login-form" action="/api/accounts/login/" method="post">
+    {% csrf_token %}
 
-  <div class="field">
-    <label for="username">Nom d'utilisateur <span class="req">*</span></label>
-    <input type="text" id="username" name="username" required />
-  </div>
+    <div class="field">
+      <label for="username">Nom d'utilisateur <span class="req">*</span></label>
+      <input type="text" id="username" name="username" required />
+    </div>
 
-  <div class="field">
-    <label for="password">Mot de passe <span class="req">*</span></label>
-    <input
-      type="password"
-      id="password"
-      name="password"
-      autocomplete="current-password"
-      required />
-  </div>
+    <div class="field">
+      <label for="password">Mot de passe <span class="req">*</span></label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        autocomplete="current-password"
+        required />
+    </div>
 
-  <p id="login-msg"></p>
+    <p id="login-msg"></p>
 
-  <input type="submit" value="Se connecter" />
-</form>
+    <input type="submit" value="Se connecter" />
+  </form>
+
+</main>
 
 {% endblock %}
 {% block scripts %}
+<script src="{% static 'js/geoloc.js' %}"></script>
 <script src="{% static 'js/app.js' %}" defer></script>
 {% endblock %}
 

@@ -6,20 +6,27 @@
     <meta charset="UTF-8">
     <title>{% block title %}Truitr{% endblock %}</title>
 
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=20">
 
     {% block styles %}
     {% endblock %}
 </head>
 
 <body>
-    {% include 'navbar.html' %}
-    {% block content %}
-    {% endblock %}
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+{% block content %}
+{% endblock %}
 
-    {% block scripts %}
-    {% endblock %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<script src="{% static 'js/geoloc.js' %}?v=30" defer></script>
+<script src="{% static 'js/app.js' %}?v=30" defer></script>
+
+{% block scripts %}
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
 </body>
 </html>

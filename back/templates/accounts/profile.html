@@ -9,50 +9,46 @@
 
 {% block content %}
 
-<main class="profile-page">
+<main class="profile-layout">
 
-    <section class="profile-card">
+    <aside class="profile-left">
+        <h2>Truitr</h2>
 
-        <div class="profile-cover"></div>
+        <nav>
+            <a href="/base/">Accueil</a>
+            <a href="/profile/" class="active">Profil</a>
+            <a href="#">Messages</a>
+            <a href="#">Recherche</a>
+        </nav>
 
-        <div class="profile-header">
-            <img id="profile-img" class="profile-avatar" src="" alt="Photo de profil">
+        <button onclick="logoutUser()" class="logout-btn">
+            Déconnexion
+        </button>
+    </aside>
 
-            <div class="profile-main-info">
-                <h1 id="user-fullname">Chargement...</h1>
-                <p id="user-handle">@username</p>
+    <section class="profile-center">
+
+        <div class="profile-topbar">
+            <h1>Profil</h1>
+            <span id="user-handle">@username</span>
+        </div>
+
+        <section class="profile-card">
+
+            <div class="profile-cover"></div>
+
+            <div class="profile-header">
+                <img id="profile-img" class="profile-avatar" src="" alt="Photo de profil">
+
+                <div class="profile-main-info">
+                    <h2 id="user-fullname">Chargement...</h2>
+                    <p>Robot social account</p>
+                </div>
             </div>
-        </div>
 
-        <div class="profile-grid">
-
-            <section class="profile-section">
-                <h2>Informations</h2>
-
-                <div class="info-row">
-                    <span>Email</span>
-                    <strong id="user-email">—</strong>
-                </div>
-
-                <div class="info-row">
-                    <span>Genre</span>
-                    <strong id="user-sex">—</strong>
-                </div>
-
-                <div class="info-row">
-                    <span>Date de naissance</span>
-                    <strong id="user-birthdate">—</strong>
-                </div>
-            </section>
-
-        </div>
-
-        <section class="profile-section">
-            <h2>Activité</h2>
-
-            <div class="stats">
+            <div class="profile-stats">
                 <div>
-                    <strong>0</strong>
+                    <strong id="posts-count">0</strong>
                     <span>Posts</span>
                 </div>
 
@@ -66,9 +62,45 @@
                     <span>Suivis</span>
                 </div>
             </div>
+
+            <div class="profile-info">
+                <div>
+                    <span>Email</span>
+                    <strong id="user-email">—</strong>
+                </div>
+
+                <div>
+                    <span>Genre</span>
+                    <strong id="user-sex">—</strong>
+                </div>
+
+                <div>
+                    <span>Date de naissance</span>
+                    <strong id="user-birthdate">—</strong>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="posts-section">
+            <h2>Posts</h2>
+            <div id="profile-posts"></div>
         </section>
 
     </section>
+
+    <aside class="profile-right">
+        <div class="side-card">
+            <h3>Suggestions</h3>
+            <p>Les comptes à suivre arriveront bientôt.</p>
+        </div>
+
+        <div class="side-card">
+            <h3>Score</h3>
+            <strong>0 / 5</strong>
+            <p>Note utilisateur à calculer plus tard.</p>
+        </div>
+    </aside>
 
 </main>
 

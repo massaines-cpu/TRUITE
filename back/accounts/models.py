@@ -1,26 +1,21 @@
 from django.db import models
 from django.core.validators import MaxLengthValidator
 from django.core.exceptions import ValidationError
+import hashlib
+from django.utils import timezone
+from datetime import timedelta
+from django.contrib.auth.models import AbstractUser
 
 
 
-class User(models.Model):
-    username = models.CharField(max_length=100, unique=True)
-    email = models.EmailField(unique=True)
 
-    password = models.CharField(max_length=255)
-
+class User(AbstractUser):
     sex = models.CharField(max_length=20, blank=True, null=True)
-
     profile_pic = models.ImageField(
-        blank=True,
-        null=True,
-        upload_to="profiles/"
+        blank=True, null=True,
+        upload_to="profiles/",
+        default="profiles/default.png"
     )
-
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-
     birth_date = models.DateField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
@@ -66,7 +61,6 @@ class Content(models.Model):
     likes = models.ManyToManyField(
         User,
         related_name="liked_posts",
-        null=True,
         blank=True
     )
 
@@ -80,3 +74,23 @@ class Content(models.Model):
 
     def total_likes(self):
         return self.likes.count()        
+
+class Localisation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)    
+    longitude = models.FloatField()
+    latitude = models.FloatField()
+    date = models.DateTimeField(auto_now_add=True)
+
+
+class AuthToken(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tokens")
+    token_hash = models.CharField(max_length=64, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+
+    def is_valid(self):
+        return self.expires_at > timezone.now()
+
+    @staticmethod
+    def hash_token(token):
+        return hashlib.sha256(token.encode()).hexdigest()

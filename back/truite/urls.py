@@ -3,7 +3,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
-from accounts.views import login_page, register_page, profile_page, logout_view,poste_user
+from accounts.views import login_page, register_page, profile_page, logout_view,poste_user, home_view
+from truite.views import recup_geoloc
 
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -13,9 +14,12 @@ from drf_spectacular.views import (
 urlpatterns = [
     path("admin/", admin.site.urls),
 
+    path("", home_view, name="home"),
+    path("base/", home_view, name="base_page"),
     path("login/", login_page, name="login_page"),
     path("register/", register_page, name="register_page"),
     path("profile/", profile_page, name="profile_page"),
+    path('recup-location/', recup_geoloc, name='recup geoloc'),
 
     path("api/accounts/", include("accounts.urls")),
     path("api/posts/", include("posts.urls")),
