@@ -47,16 +47,14 @@ function renderProfile(user, posts) {
 
     const img = document.getElementById("profile-img");
 
-    if (user.profile_pic) {
+    if (user.profile_pic && !user.profile_pic.includes("default-")) {
         img.src = user.profile_pic;
-    
     } else {
-        if (user.sex && user.sex.tolowercase() === "female") {
+        if (user.sex && user.sex.toLowerCase() === "female") {
             img.src = "/static/images/default-female-avatar.png";
         } else {
             img.src = "/static/images/default-male-avatar.png";
         }
-        
     }
 
     document.getElementById("posts-count").textContent = posts.length;
