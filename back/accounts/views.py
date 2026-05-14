@@ -6,10 +6,11 @@ from rest_framework import status
 from drf_spectacular.utils import extend_schema
 from django.contrib.auth import logout
 from django.shortcuts import redirect
+from .models import Content
 
 
 from .models import User
-from .serializers import UserSerializer
+from .serializers import UserSerializer, ContentSerializer
 
 
 def login_page(request):
@@ -81,3 +82,23 @@ def public_profile(request, username):
 def logout_view(request):
     logout(request)
     return redirect("login_page")
+@extend_schema(request=ContentSerializer, responses=ContentSerializer)
+@api_view(["POST"])
+def poste_user(request):
+    text = request.data.get("content")
+
+    if not text:
+        return Response(
+            {"error": "content is required"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    post = Content.objects.create(
+        user_id=request.data.get("user_id"),
+        content=text
+    )
+
+    return Response(
+        ContentSerializer(post).data,
+        status=status.HTTP_201_CREATED
+    )

@@ -3,7 +3,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
-from accounts.views import login_page, register_page, profile_page, logout_view
+from accounts.views import login_page, register_page, profile_page, logout_view,poste_user
 
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -25,7 +25,8 @@ urlpatterns = [
 
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
-    path("logout/", logout_view, name="logout")
+    path("logout/", logout_view, name="logout"),
+    path("post/", poste_user, name="post_user"),
 ]
 
 if settings.DEBUG:

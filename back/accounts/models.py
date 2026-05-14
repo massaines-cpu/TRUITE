@@ -3,6 +3,7 @@ from django.core.validators import MaxLengthValidator
 from django.core.exceptions import ValidationError
 
 
+
 class User(models.Model):
     username = models.CharField(max_length=100, unique=True)
     email = models.EmailField(unique=True)
@@ -65,6 +66,7 @@ class Content(models.Model):
     likes = models.ManyToManyField(
         User,
         related_name="liked_posts",
+        null=True,
         blank=True
     )
 
