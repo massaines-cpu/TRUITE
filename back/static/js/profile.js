@@ -50,15 +50,19 @@ function renderProfile(user, posts) {
     if (user.profile_pic && !user.profile_pic.includes("default-")) {
         img.src = user.profile_pic;
     } else {
-        if (user.sex && user.sex.toLowerCase() === "female") {
-            img.src = "/static/images/default-female-avatar.png";
-        } else {
-            img.src = "/static/images/default-male-avatar.png";
-        }
+        img.src = getDefaultAvatar(user);
     }
 
     document.getElementById("posts-count").textContent = posts.length;
     renderPosts(posts);
+}
+
+function getDefaultAvatar(user = null) {
+    if (user && user.sex && user.sex.toLowerCase() === "female") {
+        return "/static/images/default-female-avatar.png";
+    }
+
+    return "/static/images/default-male-avatar.png";
 }
 
 function renderPosts(posts) {
@@ -76,7 +80,7 @@ function renderPosts(posts) {
     container.innerHTML = posts.map(post => `
         <article class="tweet-card">
             <div class="tweet-avatar">
-                <img src="/media/profiles/default-male-avatar.png" alt="avatar">
+                <img src="${getDefaultAvatar()}" alt="avatar">
             </div>
 
             <div class="tweet-body">

@@ -2,6 +2,10 @@ document.addEventListener("DOMContentLoaded", function () {
     loadFeed();
 });
 
+function getDefaultAvatar() {
+    return "/static/images/default-male-avatar.png";
+}
+
 async function loadFeed() {
 
     const response = await fetch("/api/accounts/posts/list/");
@@ -13,7 +17,7 @@ async function loadFeed() {
         <article class="tweet-card">
 
             <div class="tweet-avatar">
-                <img src="/media/profiles/default-male-avatar.png">
+                <img src="${getDefaultAvatar()}" alt="avatar">
             </div>
 
             <div class="tweet-body">
@@ -43,5 +47,5 @@ async function loadFeed() {
 
 function logoutUser() {
     localStorage.clear();
-    window.location.href = "/login/";
+    window.location.href = "/";
 }
