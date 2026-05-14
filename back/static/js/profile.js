@@ -65,6 +65,14 @@ function getDefaultAvatar(user = null) {
     return "/static/images/default-male-avatar.png";
 }
 
+function fixImageUrl(url) {
+    if (!url) return "";
+
+    return url
+        .replace("/media/posts/", "/static/images/posts/")
+        .replace("/media/images/posts/", "/static/images/posts/");
+}
+
 function renderPosts(posts) {
     const container = document.getElementById("profile-posts");
 
@@ -91,7 +99,7 @@ function renderPosts(posts) {
 
                 <p>${post.content || ""}</p>
 
-                ${post.image ? `<img class="tweet-image" src="${post.image}" alt="post image">` : ""}
+                ${post.image ? `<img class="tweet-image" src="${fixImageUrl(post.image)}">` : ""}
 
                 <div class="tweet-actions">
                     <span>♡ ${post.total_likes || 0}</span>

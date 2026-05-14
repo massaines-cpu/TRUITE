@@ -2,8 +2,21 @@ document.addEventListener("DOMContentLoaded", function () {
     loadFeed();
 });
 
-function getDefaultAvatar() {
+function getDefaultAvatar(sex) {
+
+    if (sex && sex.toLowerCase() === "female") {
+        return "/static/images/default-female-avatar.png";
+    }
+
     return "/static/images/default-male-avatar.png";
+}
+
+function fixImageUrl(url) {
+    if (!url) return "";
+
+    return url
+        .replace("/media/posts/", "/static/images/posts/")
+        .replace("/media/images/posts/", "/static/images/posts/");
 }
 
 async function loadFeed() {
@@ -17,7 +30,15 @@ async function loadFeed() {
         <article class="tweet-card">
 
             <div class="tweet-avatar">
-                <img src="${getDefaultAvatar()}" alt="avatar">
+                <img src="${
+                    post.author_profile_pic &&
+                    !post.author_profile_pic.includes('default-')
+
+                        ? post.author_profile_pic
+
+                        : getDefaultAvatar(post.author_sex)
+
+                }" alt="avatar">
             </div>
 
             <div class="tweet-body">
@@ -30,7 +51,7 @@ async function loadFeed() {
                 <p>${post.content}</p>
 
                 ${post.image ? `
-                    <img class="tweet-image" src="${post.image}">
+                    <img class="tweet-image" src="${fixImageUrl(post.image)}">
                 ` : ""}
 
                 <div class="tweet-actions">

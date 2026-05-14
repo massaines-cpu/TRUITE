@@ -28,6 +28,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ContentSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source="user.username", read_only=True)
+    author_sex = serializers.CharField(source="user.sex", read_only=True)
+    author_profile_pic = serializers.ImageField(source="user.profile_pic", read_only=True)
     total_likes = serializers.SerializerMethodField()
 
     class Meta:
@@ -35,6 +37,8 @@ class ContentSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "author",
+            "author_sex",
+            "author_profile_pic",
             "content",
             "image",
             "total_likes",
@@ -43,6 +47,8 @@ class ContentSerializer(serializers.ModelSerializer):
         read_only_fields = [
             "id",
             "author",
+            "author_sex",
+            "author_profile_pic",
             "total_likes",
             "created_at"
         ]
@@ -54,6 +60,7 @@ class ContentSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
+
 
 class LikeSerializer(serializers.Serializer):
     user_id = serializers.IntegerField()

@@ -52,7 +52,7 @@ class Content(models.Model):
     )
 
     image = models.ImageField(
-        upload_to='posts/',
+        upload_to='images/posts/',
         null=True,
         blank=True,
         validators=[validate_image_size]
