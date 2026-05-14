@@ -100,7 +100,7 @@ body {
 .profile-cover {
     height: 210px;
 
-    background-image: url("/media/profiles/fish-cover.png");
+    background-image: url("/static/images/fish-cover.png");
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;

@@ -52,9 +52,9 @@ function renderProfile(user, posts) {
     
     } else {
         if (user.sex && user.sex.tolowercase() === "female") {
-            img.src = "/media/profiles/default-female-avatar.png";
+            img.src = "/static/images/default-female-avatar.png";
         } else {
-            img.src = "/media/profiles/default-male-avatar.png";
+            img.src = "/static/images/default-male-avatar.png";
         }
         
     }
