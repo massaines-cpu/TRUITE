@@ -6,8 +6,6 @@ function envoyerGeoloc(token) {
 
     function (pos) {
 
-      console.log("2 - position OK");
-
       console.log("3 - AVANT FETCH");
 
       fetch('/recup-location/', {

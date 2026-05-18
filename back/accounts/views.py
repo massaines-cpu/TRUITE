@@ -20,6 +20,8 @@ def login_page(request):
 def register_page(request):
     return render(request, "accounts/register.html")
 
+def profile_page(request):
+    return render(request, "accounts/profile.html")
 
 @extend_schema(request=UserSerializer, responses=UserSerializer)
 @api_view(["POST"])
