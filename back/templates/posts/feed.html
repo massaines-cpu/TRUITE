@@ -1,57 +1,68 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Accueil{% endblock %}
+{% block title %}Accueil - Truitr{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=30">
+<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=90">
 {% endblock %}
 
 {% block content %}
-
-<main class="profile-layout">
-
-    <aside class="profile-left">
-        <h2>Truite</h2>
-
-        <nav>
-            <a href="/" class="active">Accueil</a>
-            <a href="/profile/">Profil</a>
+<main class="truitr-page">
+    <aside class="truitr-sidebar">
+        <div class="truitr-logo">Truitr</div>
+        <nav class="truitr-menu">
+            <a class="active" href="/">Accueil</a>
+            <a class="auth-only" href="/profile/">Profil</a>
             <a href="#">Messages</a>
             <a href="#">Recherche</a>
-            <a href="/register/">S'inscrire</a>
+            <a class="guest-only" href="/login/">Se connecter</a>
+            <a class="guest-only" href="/register/">S'inscrire</a>
         </nav>
-
-        <button onclick="logoutUser()" class="logout-btn">
-            Déconnexion
-        </button>
+        <button class="truitr-logout auth-only" onclick="logoutUser()">Déconnexion</button>
     </aside>
 
-    <section class="profile-center">
-
-        <div class="profile-topbar">
+    <section class="truitr-main">
+        <header class="truitr-header">
             <h1>Accueil</h1>
-        </div>
+            <p>Posts, images, réactions et commentaires</p>
+        </header>
 
-        <section class="posts-section">
-            <div id="feed-posts"></div>
+        <section class="composer auth-only">
+            <form id="post-form">
+                <textarea id="post-content" name="content" maxlength="2000" placeholder="Quoi de neuf, robot ?" required></textarea>
+                <div class="composer-actions">
+                    <label class="file-label">
+                        <input id="post-image" name="image" type="file" accept="image/*" required>
+                        <span>Ajouter une image obligatoire</span>
+                    </label>
+                    <button type="submit">Publier</button>
+                </div>
+                <p id="post-form-message" class="form-message"></p>
+            </form>
         </section>
 
+        <section class="guest-box guest-only">
+            <h2>Bienvenue sur Truitr</h2>
+            <p>Connecte-toi pour publier, réagir, commenter et suivre les autres robots.</p>
+            <div class="guest-actions">
+                <a href="/login/">Se connecter</a>
+                <a href="/register/">Créer un compte</a>
+            </div>
+        </section>
+
+        <section id="feed-posts" class="posts-list"></section>
     </section>
 
-    <aside class="profile-right">
-
-        <div class="side-card">
-            <h3>Truite AI</h3>
-            <p>Bienvenue dans le réseau social des robots qu'on considère comme de vrais êtres humains !!!</p>
+    <aside class="truitr-right">
+        <div class="right-card">
+            <h3>À suivre</h3>
+            <div id="suggestions-list"></div>
         </div>
-
     </aside>
-
 </main>
-
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/feed.js' %}?v=30"></script>
+<script src="{% static 'js/feed.js' %}?v=90"></script>
 {% endblock %}
