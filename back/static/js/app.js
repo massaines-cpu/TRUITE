@@ -41,3 +41,31 @@ if ($('#login-form').length) {
   });
 
 }
+
+$('#register-form').on('submit', function (e) {
+  e.preventDefault();
+
+  const formData = {
+    username: $('#username').val(),
+    password: $('#password').val(),
+  };
+
+  $.ajax({
+    url: '/api/accounts/register/',
+    type: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify(formData),
+
+    success: function (response) {
+      console.log("REGISTER OK");
+
+      if (response.redirect) {
+        window.location.href = response.redirect;
+      }
+    },
+
+    error: function (xhr) {
+      console.log(xhr.responseJSON);
+    }
+  });
+});

@@ -475,3 +475,40 @@ body {
 .suggestion-row button:hover {
     background: #0f7ec8;
 }
+.profile-edit-section {
+    display: none;
+    padding: 24px;
+    border-bottom: 1px solid #e6ecf0;
+    animation: slideDown 0.2s ease;
+}
+
+
+.profile-edit-section.visible {
+    display: block;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.btn-edit-profile {
+    border: 2px solid #0f1419;
+    border-radius: 999px;
+    background: white;
+    color: #0f1419;
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-edit-profile:hover {
+    background: #0f1419;
+    color: white;
+}
+
+.btn-edit-profile.active {
+    background: #0f1419;
+    color: white;
+}

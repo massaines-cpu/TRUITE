@@ -1,12 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import logout
+from rest_framework.parsers import MultiPartParser, FormParser
 
 import secrets
 from datetime import timedelta
 from django.utils import timezone
 
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -222,3 +223,37 @@ def toggle_like(request, post_id):
 
 #! Modifier et supprier les posts et les profils seront implémentés plus tard avec tokens
 
+@api_view(["PATCH"])
+@parser_classes([MultiPartParser, FormParser])
+def update_profile(request):
+    user = get_current_user(request)
+
+    if not user:
+        return Response({"error": "Unauthorized"}, status=401)
+
+    data = request.data
+
+    if "username" in data:
+        user.username = data["username"]
+
+    if "email" in data:
+        user.email = data["email"]
+
+    if "sex" in data:
+        user.sex = data["sex"]
+
+    if "birth_date" in data:
+        user.birth_date = data["birth_date"]
+
+    if "first_name" in data:
+        user.first_name = data["first_name"]
+
+    if "last_name" in data:
+        user.last_name = data["last_name"]
+
+    if request.FILES.get("profile_pic"):
+        user.profile_pic = request.FILES["profile_pic"]
+
+    user.save()
+
+    return Response(UserSerializer(user).data)

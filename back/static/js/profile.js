@@ -46,22 +46,6 @@ function isMyProfile() {
     return currentUser && profileUser && Number(currentUser.id) === Number(profileUser.id);
 }
 
-document.addEventListener("DOMContentLoaded", async function () {
-    currentUser = getStoredUser();
-    profileUserId = getProfileUserId();
-
-    if (!profileUserId) {
-        window.location.href = "/login/";
-        return;
-    }
-
-    updateAuthDisplay();
-    bindPostForm();
-    await loadReactionTypes();
-    await fetchUserProfile();
-    await loadSuggestions();
-});
-
 function updateAuthDisplay() {
     const authenticated = isAuthenticated();
 
@@ -222,9 +206,9 @@ async function loadFollowStatus(userId) {
 
 function getDefaultAvatar(sex = null) {
     if (sex && sex.toLowerCase() === "female") {
-        return "/static/images/default-female-avatar.png";
+        return "${username}.png";
     }
-    return "/static/images/default-male-avatar.png";
+    return "${username}.png";
 }
 
 function cleanAvatarUrl(url, sex = null) {
@@ -300,6 +284,7 @@ function renderPost(post) {
                         <strong>${escapeHtml(post.author)}</strong>
                         <span>@${escapeHtml(post.author)}</span>
                     </a>
+                    <p>coucou</p>
                     <span class="post-date">${formatDate(post.created_at)}</span>
                 </div>
 
@@ -548,6 +533,59 @@ function logoutUser() {
     window.location.href = "/";
 }
 
+function toggleEditProfile() {
+    const section = document.querySelector('.profile-edit-section');
+    const btn = document.getElementById('edit-profile-btn');
+
+    section.classList.toggle('visible');
+    btn.classList.toggle('active');
+
+    btn.textContent = section.classList.contains('visible')
+        ? 'Annuler'
+        : 'Modifier le profil';
+
+    if (section.classList.contains('visible') && profileUser) {
+        fillEditForm(profileUser);
+    }
+
+    if (section.classList.contains('visible')) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+document.addEventListener("DOMContentLoaded", async function () {
+    currentUser = getStoredUser();
+    profileUserId = getProfileUserId();
+
+    if (!profileUserId) {
+        window.location.href = "/login/";
+        return;
+    }
+
+    updateAuthDisplay();
+    bindPostForm();
+    bindProfileEditForm(); // 🔥 AJOUT
+
+    const editBtn = document.getElementById("edit-profile-btn");
+    if (editBtn) {
+        editBtn.addEventListener("click", toggleEditProfile);
+    }
+
+    await loadReactionTypes();
+    await fetchUserProfile();
+    await loadSuggestions();
+});
+
+function fillEditForm(user) {
+    const u = document.getElementById("edit-username");
+    const e = document.getElementById("edit-email");
+    const s = document.getElementById("edit-sex");
+    const b = document.getElementById("edit-birth_date");
+
+    if (u) u.value = user.username || "";
+    if (e) e.value = user.email || "";
+    if (s) s.value = user.sex || "";
+    if (b) b.value = user.birth_date || "";
+}
 
 function bindProfileEditForm() {
     const form = document.getElementById("profile-edit-form");
@@ -590,4 +628,4 @@ function bindProfileEditForm() {
         updateAuthDisplay();
         toggleEditProfile();
     });
-}
+}}

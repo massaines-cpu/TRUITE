@@ -6,6 +6,7 @@ from .views import (
     public_profile,
     logout_view,
     home_view,
+    update_profile,
     poste_user,
     list_posts,
     toggle_like,
@@ -20,6 +21,7 @@ urlpatterns = [
 
     path("profile/<int:user_id>/", profile, name="api_profile"),
     path("profile/username/<str:username>/", public_profile, name="api_public_profile"),
+    path("profile/update/", update_profile, name="api_update_profile"),
 
     path("logout/", logout_view, name="logout"),
     path("", home_view, name="home"),
