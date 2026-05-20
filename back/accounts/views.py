@@ -218,3 +218,7 @@ def toggle_like(request, post_id):
         "liked": liked,
         "total_likes": post.likes.count()
     })
+
+
+#! Modifier et supprier les posts et les profils seront implémentés plus tard avec tokens
+

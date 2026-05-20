@@ -547,3 +547,47 @@ function logoutUser() {
     localStorage.clear();
     window.location.href = "/";
 }
+
+
+function bindProfileEditForm() {
+    const form = document.getElementById("profile-edit-form");
+    if (!form) return;
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+
+        formData.append("username", document.getElementById("edit-username").value);
+        formData.append("email", document.getElementById("edit-email").value);
+        formData.append("sex", document.getElementById("edit-sex").value);
+        formData.append("birth_date", document.getElementById("edit-birth_date").value);
+        formData.append("first_name", document.getElementById("edit-first_name").value);
+        formData.append("last_name", document.getElementById("edit-last_name").value);
+
+        const avatar = document.getElementById("edit-avatar").files[0];
+        if (avatar) {
+            formData.append("profile_pic", avatar);
+        }
+
+        const res = await fetch("/api/accounts/profile/update/", {
+            method: "PATCH",
+            headers: authHeaders(),
+            body: formData
+        });
+
+        const data = await safeJson(res);
+
+        if (!res.ok) {
+            console.error("Update error", data);
+            return;
+        }
+
+        // 🔥 ICI tu remplaces juste ce bloc
+        profileUser = data;
+        renderProfile(data, profilePosts);
+        updateProfileMode();
+        updateAuthDisplay();
+        toggleEditProfile();
+    });
+}

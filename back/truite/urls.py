@@ -21,6 +21,8 @@ urlpatterns = [
     path("profile/", profile_page, name="profile_page"),
     path('recup-location/', recup_geoloc, name='recup geoloc'),
 
+
+    path("api/ia/", include("IA.urls")),
     path("api/accounts/", include("accounts.urls")),
     path("api/posts/", include("posts.urls")),
     path("api/reactions/", include("reactions.urls")),

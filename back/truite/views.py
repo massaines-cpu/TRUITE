@@ -41,6 +41,9 @@ def toggle_like(request, post_id):
 def logout_page(request):
     return redirect("home")
 
+def generate_image(request):
+    return HttpResponse("Génération d'image en cours...")
+
 
 @api_view(["POST"])
 def recup_geoloc(request):
