@@ -182,7 +182,7 @@ function ensureAiModal() {
             <h3 id="ai-modal-title">Générer une image IA</h3>
 
             <p class="ai-modal-help">
-                Tu peux écrire un prompt, ou laisser vide pour utiliser le prompt par défaut du backend.
+                Tu peux écrire un prompt, ou laisser vide pour utiliser le prompt par défaut.
             </p>
 
             <textarea

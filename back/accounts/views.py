@@ -254,6 +254,9 @@ def update_profile(request):
     if request.FILES.get("profile_pic"):
         user.profile_pic = request.FILES["profile_pic"]
 
+    if request.FILES.get("banner_image"):
+        user.banner_image = request.FILES["banner_image"]
+
     user.save()
 
     return Response(UserSerializer(user).data)
