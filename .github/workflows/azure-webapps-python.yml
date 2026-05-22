@@ -4,7 +4,7 @@ name: Build, Push to DockerHub and Deploy to Azure Web App
 env:
   DOCKERHUB_IMAGE_BACK: ${{ secrets.DOCKER_USERNAME }}/truite
 
-  AZURE_WEBAPP_BACK: truite
+  AZURE_WEBAPP_BACK: truite2
 
 on:
   push:
