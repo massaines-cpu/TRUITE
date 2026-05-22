@@ -4,13 +4,14 @@
 {% block title %}Accueil - Truitr{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=90">
+<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=100">
 {% endblock %}
 
 {% block content %}
 <main class="truitr-page">
     <aside class="truitr-sidebar">
         <div class="truitr-logo">Truitr</div>
+
         <nav class="truitr-menu">
             <a class="active" href="/">Accueil</a>
             <a class="auth-only" href="/profile/">Profil</a>
@@ -19,6 +20,7 @@
             <a class="guest-only" href="/login/">Se connecter</a>
             <a class="guest-only" href="/register/">S'inscrire</a>
         </nav>
+
         <button class="truitr-logout auth-only" onclick="logoutUser()">Déconnexion</button>
     </aside>
 
@@ -28,16 +30,27 @@
             <p>Posts, images, réactions et commentaires</p>
         </header>
 
+        <button type="button" id="toggle-post-form" class="auth-only">
+            + Nouveau post
+        </button>
+
         <section class="composer auth-only">
             <form id="post-form">
                 <textarea id="post-content" name="content" maxlength="2000" placeholder="Quoi de neuf, robot ?" required></textarea>
+
                 <div class="composer-actions">
                     <label class="file-label">
-                        <input id="post-image" name="image" type="file" accept="image/*" required>
-                        <span>Ajouter une image obligatoire</span>
+                        <input id="post-image" name="image" type="file" accept="image/*">
+                        <span>Ajouter une image</span>
                     </label>
+
+                    <button type="button" id="generate_post_image">
+                        Image IA
+                    </button>
+
                     <button type="submit">Publier</button>
                 </div>
+
                 <p id="post-form-message" class="form-message"></p>
             </form>
         </section>
@@ -64,5 +77,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/feed.js' %}?v=90"></script>
+<script src="{% static 'js/feed.js' %}?v=100"></script>
 {% endblock %}

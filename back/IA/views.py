@@ -7,7 +7,6 @@ from rest_framework.response import Response
 
 load_dotenv()
 
-
 def generate_image(prompt: str) -> str:
     url = os.getenv("AZURE_MAI_ENDPOINT")
     api_key = os.getenv("AZURE_MAI_API_KEY")
@@ -19,8 +18,6 @@ def generate_image(prompt: str) -> str:
 
     payload = {
         "prompt": prompt,
-        "width": 1024,
-        "height": 1024,
         "n": 1,
         "model": "MAI-Image-2e"
     }
