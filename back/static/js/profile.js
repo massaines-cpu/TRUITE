@@ -29,6 +29,7 @@ function getProfileUserId() {
     const params = new URLSearchParams(window.location.search);
     const fromUrl = params.get("user_id");
     if (fromUrl) return fromUrl;
+
     const stored = getStoredUser();
     return stored ? stored.id : localStorage.getItem("user_id");
 }
@@ -68,52 +69,10 @@ function updateProfileMode() {
     });
 }
 
-function bindPostForm() {
-    const form = document.getElementById("profile-post-form");
-    if (!form) return;
-
-    form.addEventListener("submit", async function (event) {
-        event.preventDefault();
-
-        const content = document.getElementById("profile-post-content").value.trim();
-        const image = document.getElementById("profile-post-image").files[0];
-
-        if (!content) {
-            showProfileFormMessage("Le texte est obligatoire.", true);
-            return;
-        }
-
-        if (!image) {
-            showProfileFormMessage("L'image est obligatoire pour chaque post.", true);
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append("content", content);
-        formData.append("image", image);
-
-        const response = await fetch("/api/posts/", {
-            method: "POST",
-            headers: authHeaders(),
-            body: formData
-        });
-
-        const data = await safeJson(response);
-
-        if (!response.ok) {
-            showProfileFormMessage(data.error || data.image?.[0] || data.content?.[0] || "Erreur lors de la création du post.", true);
-            return;
-        }
-
-        form.reset();
-        showProfileFormMessage("Post publié.", false);
-        await fetchUserProfile();
-    });
-}
-
 function showProfileFormMessage(text, isError) {
     const message = document.getElementById("profile-post-form-message");
     if (!message) return;
+
     message.textContent = text;
     message.className = isError ? "form-message error" : "form-message success";
 }
@@ -147,6 +106,7 @@ async function fetchUserProfile() {
         const postsResponse = await fetch(`/api/posts/user/${profileUserId}/`, {
             headers: authHeaders()
         });
+
         const posts = postsResponse.ok ? await postsResponse.json() : [];
 
         renderProfile(profileUser, posts);
@@ -158,6 +118,60 @@ async function fetchUserProfile() {
         console.error("Erreur profil:", error);
         showProfileError();
     }
+}
+
+function bindPostForm() {
+    const form = document.getElementById("profile-post-form");
+    if (!form) return;
+
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const content = document.getElementById("profile-post-content").value.trim();
+        const image = document.getElementById("profile-post-image").files[0];
+
+        if (!content) {
+            showProfileFormMessage("Le texte est obligatoire.", true);
+            return;
+        }
+
+        if (!image) {
+            showProfileFormMessage("L'image est obligatoire pour chaque post.", true);
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("content", content);
+        formData.append("image", image);
+
+        const response = await fetch("/api/posts/", {
+            method: "POST",
+            headers: authHeaders(),
+            body: formData
+        });
+
+        const data = await safeJson(response);
+
+        if (!response.ok) {
+            showProfileFormMessage(
+                data.error || data.image?.[0] || data.content?.[0] || "Erreur lors de la création du post.",
+                true
+            );
+            return;
+        }
+
+        form.reset();
+        showProfileFormMessage("Post publié.", false);
+
+        profilePosts.unshift(data);
+        renderPosts(profilePosts);
+        bindCommentButtons();
+        updateAuthDisplay();
+        updateProfileMode();
+
+        const count = document.getElementById("posts-count");
+        if (count) count.textContent = profilePosts.length;
+    });
 }
 
 function bindCommentButtons() {
@@ -176,21 +190,25 @@ function renderProfile(user, posts) {
     document.getElementById("user-email").textContent = user.email || "—";
 
     const img = document.getElementById("profile-img");
-
     img.onerror = function () { avatarOnError(img, user.sex); };
     img.src = cleanAvatarUrl(user.profile_pic, user.sex);
 
     document.getElementById("posts-count").textContent = posts.length;
+
     profilePosts = posts;
     renderPosts(posts);
     bindCommentButtons();
 }
 
 async function loadFollowStatus(userId) {
-    const response = await fetch(`/api/follows/status/${userId}/`, { headers: authHeaders() });
+    const response = await fetch(`/api/follows/status/${userId}/`, {
+        headers: authHeaders()
+    });
+
     if (!response.ok) return;
 
     const data = await response.json();
+
     const followers = document.getElementById("followers-count");
     const following = document.getElementById("following-count");
     const button = document.getElementById("profile-follow-btn");
@@ -204,11 +222,52 @@ async function loadFollowStatus(userId) {
     }
 }
 
+function generate_image_default() {
+    const generateImage = document.getElementById("generate_image");
+
+    if (!generateImage) return;
+
+    generateImage.addEventListener("click", async function () {
+        generateImage.disabled = true;
+        generateImage.textContent = "Génération...";
+
+        const response = await fetch("/api/ia/generate/", {
+            method: "POST",
+            headers: {
+                ...authHeaders(),
+                "Content-Type": "application/json"
+            },
+            
+            body: JSON.stringify({
+                prompt: "Manon A beautiful girl programmed with tattoos on her hand"
+            })
+        });
+
+        const data = await safeJson(response);
+
+        generateImage.disabled = false;
+        generateImage.textContent = "Générer une image IA";
+
+        if (!response.ok) {
+            console.error("AI image error", data);
+            return;
+        }
+
+        if (data.image) {
+            const img = document.getElementById("profile-img");
+            if (img) {
+                img.src = `data:image/png;base64,${data.image}`;
+            }
+        }
+    });
+}
+
 function getDefaultAvatar(sex = null) {
     if (sex && sex.toLowerCase() === "female") {
-        return "${username}.png";
+        return "/static/images/default-female-avatar.png";
     }
-    return "${username}.png";
+
+    return "/static/images/default-male-avatar.png";
 }
 
 function cleanAvatarUrl(url, sex = null) {
@@ -239,8 +298,10 @@ function avatarOnError(img, sex) {
 
 function formatDate(value) {
     if (!value) return "";
+
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return "";
+
     return date.toLocaleString("fr-FR");
 }
 
@@ -271,6 +332,9 @@ function renderPosts(posts) {
 
 function renderPost(post) {
     const avatar = cleanAvatarUrl(post.author_profile_pic, post.author_sex);
+    const isMyPost =
+        currentUser &&
+        Number(currentUser.id) === Number(post.author_id);
 
     return `
         <article class="tweet-card" id="post-${post.id}">
@@ -284,9 +348,69 @@ function renderPost(post) {
                         <strong>${escapeHtml(post.author)}</strong>
                         <span>@${escapeHtml(post.author)}</span>
                     </a>
-                    <p>coucou</p>
+
+                    ${isMyPost
+                        ? `
+                            <div class="post-owner-actions">
+
+                                <button
+                                    type="button"
+                                    class="edit-post-btn"
+                                    onclick="openEditPost(${post.id})">
+                                    Modifier
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="delete-post-btn"
+                                    onclick="deletePost(${post.id})">
+                                    Supprimer
+                                </button>
+
+                            </div>
+                        `
+                        : ""
+                    }
+                    ${isMyPost
+                    ? `
+                        <div
+                            class="edit-post-box"
+                            id="edit-box-${post.id}"
+                            style="display:none;"
+                        >
+
+                            <textarea
+                                id="edit-content-${post.id}"
+                            >${escapeHtml(post.content)}</textarea>
+
+                            <input
+                                type="file"
+                                id="edit-image-${post.id}"
+                                accept="image/*"
+                            >
+
+                            <div class="edit-actions">
+
+                                <button
+                                    type="button"
+                                    onclick="submitEditPost(${post.id})">
+                                    Enregistrer
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onclick="closeEditPost(${post.id})">
+                                    Annuler
+                                </button>
+
+                            </div>
+
+                        </div>
+                    `
+                    : ""
+                }
                     <span class="post-date">${formatDate(post.created_at)}</span>
-                </div>
+                
 
                 <p class="post-text">${escapeHtml(post.content)}</p>
 
@@ -320,6 +444,7 @@ function renderComment(comment) {
             <a href="${profileUrl(comment.author_id)}">
                 <img src="${avatar}" alt="avatar" onerror="avatarOnError(this, '${escapeHtml(comment.author_sex || "")}')">
             </a>
+
             <div class="comment-body">
                 <div class="comment-top">
                     <a class="author-link" href="${profileUrl(comment.author_id)}">
@@ -327,6 +452,7 @@ function renderComment(comment) {
                         <span>@${escapeHtml(comment.author)}</span>
                     </a>
                 </div>
+
                 <p>${escapeHtml(comment.content)}</p>
 
                 <div class="comment-actions reaction-row">
@@ -351,6 +477,7 @@ function renderReactionButtons(target, targetId, summary = {}, selected = null) 
     return reactionTypes.map(reaction => {
         const count = summary && summary[reaction.slug] ? summary[reaction.slug] : 0;
         const activeClass = selected === reaction.slug ? "active" : "";
+
         return `
             <button type="button" class="reaction-btn ${activeClass}" onclick="reactTo('${target}', ${targetId}, '${reaction.slug}')" title="${escapeHtml(reaction.label)}">
                 <span class="reaction-emoji">${reaction.emoji}</span>
@@ -361,7 +488,6 @@ function renderReactionButtons(target, targetId, summary = {}, selected = null) 
 }
 
 async function createComment(postId) {
-    console.log("COMMENT CLICKED", postId);
     if (!isAuthenticated()) {
         window.location.href = "/login/";
         return;
@@ -381,28 +507,50 @@ async function createComment(postId) {
         body: JSON.stringify({ content })
     });
 
+    const data = await safeJson(response);
+
     if (!response.ok) {
-        console.error("Comment error", await safeJson(response));
+        console.error("Comment error", data);
         return;
     }
 
     input.value = "";
-    await fetchUserProfile();
+
+    const index = profilePosts.findIndex(post => Number(post.id) === Number(postId));
+
+    if (index !== -1) {
+        profilePosts[index].comments = profilePosts[index].comments || [];
+        profilePosts[index].comments.push(data);
+        profilePosts[index].comments_count = (profilePosts[index].comments_count || 0) + 1;
+
+        const oldCard = document.getElementById(`post-${postId}`);
+        if (oldCard) {
+            oldCard.outerHTML = renderPost(profilePosts[index]);
+            bindCommentButtons();
+            updateAuthDisplay();
+            updateProfileMode();
+        }
+    }
 }
 
 function toggleReplyForm(commentId) {
     const form = document.getElementById(`reply-form-${commentId}`);
     if (!form) return;
+
     form.classList.toggle("visible");
 }
 
 async function createReply(event, commentId) {
     event.preventDefault();
 
-    if (!isAuthenticated()) return;
+    if (!isAuthenticated()) {
+        window.location.href = "/login/";
+        return;
+    }
 
     const form = event.target;
     const content = form.content.value.trim();
+
     if (!content) return;
 
     const response = await fetch(`/api/posts/comments/${commentId}/replies/`, {
@@ -414,13 +562,16 @@ async function createReply(event, commentId) {
         body: JSON.stringify({ content })
     });
 
+    const data = await safeJson(response);
+
     if (!response.ok) {
-        console.error("Reply error", await safeJson(response));
+        console.error("Reply error", data);
         return;
     }
 
     form.reset();
     form.classList.remove("visible");
+
     await fetchUserProfile();
 }
 
@@ -475,7 +626,10 @@ async function loadSuggestions() {
     const container = document.getElementById("suggestions-list");
     if (!container) return;
 
-    const response = await fetch("/api/follows/suggestions/", { headers: authHeaders() });
+    const response = await fetch("/api/follows/suggestions/", {
+        headers: authHeaders()
+    });
+
     const users = response.ok ? await response.json() : [];
 
     if (!users.length) {
@@ -534,57 +688,41 @@ function logoutUser() {
 }
 
 function toggleEditProfile() {
-    const section = document.querySelector('.profile-edit-section');
-    const btn = document.getElementById('edit-profile-btn');
+    const section = document.querySelector(".profile-edit-section");
+    const btn = document.getElementById("edit-profile-btn");
 
-    section.classList.toggle('visible');
-    btn.classList.toggle('active');
+    if (!section || !btn) return;
 
-    btn.textContent = section.classList.contains('visible')
-        ? 'Annuler'
-        : 'Modifier le profil';
+    section.classList.toggle("visible");
+    btn.classList.toggle("active");
 
-    if (section.classList.contains('visible') && profileUser) {
+    btn.textContent = section.classList.contains("visible")
+        ? "Annuler"
+        : "Modifier le profil";
+
+    if (section.classList.contains("visible") && profileUser) {
         fillEditForm(profileUser);
     }
 
-    if (section.classList.contains('visible')) {
-        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (section.classList.contains("visible")) {
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 }
-document.addEventListener("DOMContentLoaded", async function () {
-    currentUser = getStoredUser();
-    profileUserId = getProfileUserId();
-
-    if (!profileUserId) {
-        window.location.href = "/login/";
-        return;
-    }
-
-    updateAuthDisplay();
-    bindPostForm();
-    bindProfileEditForm(); // 🔥 AJOUT
-
-    const editBtn = document.getElementById("edit-profile-btn");
-    if (editBtn) {
-        editBtn.addEventListener("click", toggleEditProfile);
-    }
-
-    await loadReactionTypes();
-    await fetchUserProfile();
-    await loadSuggestions();
-});
 
 function fillEditForm(user) {
     const u = document.getElementById("edit-username");
     const e = document.getElementById("edit-email");
     const s = document.getElementById("edit-sex");
     const b = document.getElementById("edit-birth_date");
+    const f = document.getElementById("edit-first_name");
+    const l = document.getElementById("edit-last_name");
 
     if (u) u.value = user.username || "";
     if (e) e.value = user.email || "";
     if (s) s.value = user.sex || "";
     if (b) b.value = user.birth_date || "";
+    if (f) f.value = user.first_name || "";
+    if (l) l.value = user.last_name || "";
 }
 
 function bindProfileEditForm() {
@@ -604,6 +742,7 @@ function bindProfileEditForm() {
         formData.append("last_name", document.getElementById("edit-last_name").value);
 
         const avatar = document.getElementById("edit-avatar").files[0];
+
         if (avatar) {
             formData.append("profile_pic", avatar);
         }
@@ -621,11 +760,127 @@ function bindProfileEditForm() {
             return;
         }
 
-        // 🔥 ICI tu remplaces juste ce bloc
         profileUser = data;
         renderProfile(data, profilePosts);
         updateProfileMode();
         updateAuthDisplay();
         toggleEditProfile();
     });
-}}
+}
+
+document.addEventListener("DOMContentLoaded", async function () {
+    currentUser = getStoredUser();
+    profileUserId = getProfileUserId();
+
+    if (!profileUserId) {
+        window.location.href = "/login/";
+        return;
+    }
+
+    updateAuthDisplay();
+    bindPostForm();
+    bindProfileEditForm();
+    generate_image_default();
+
+    const editBtn = document.getElementById("edit-profile-btn");
+
+    if (editBtn) {
+        editBtn.addEventListener("click", toggleEditProfile);
+    }
+
+    await loadReactionTypes();
+    await fetchUserProfile();
+    await loadSuggestions();
+});
+
+async function deletePost(postId) {
+
+    const confirmed = confirm("Supprimer cette publication ?");
+    if (!confirmed) return;
+
+    const response = await fetch(`/api/posts/${postId}/delete/`, {
+        method: "DELETE",
+        headers: authHeaders()
+    });
+
+    const data = await safeJson(response);
+
+    if (!response.ok) {
+        console.error("Delete error", data);
+        return;
+    }
+
+    const postEl = document.getElementById(`post-${postId}`);
+    if (postEl) {
+        postEl.remove();
+    }
+}
+
+
+function openEditPost(postId) {
+    const box = document.getElementById(`edit-box-${postId}`);
+
+    if (box) {
+        box.style.display = "block";
+    }
+}
+
+function closeEditPost(postId) {
+    const box = document.getElementById(`edit-box-${postId}`);
+
+    if (box) {
+        box.style.display = "none";
+    }
+}
+async function submitEditPost(postId) {
+
+    const content = document
+        .getElementById(`edit-content-${postId}`)
+        .value
+        .trim();
+
+    const imageInput = document.getElementById(`edit-image-${postId}`);
+
+    const formData = new FormData();
+    formData.append("content", content);
+
+    if (imageInput.files[0]) {
+        formData.append("image", imageInput.files[0]);
+    }
+
+    const response = await fetch(`/api/posts/${postId}/update/`, {
+        method: "PATCH",
+        headers: authHeaders(),
+        body: formData
+    });
+
+    const data = await safeJson(response);
+
+    if (!response.ok) {
+        console.error("Update post error", data);
+        return;
+    }
+
+    const index = profilePosts.findIndex(
+        p => Number(p.id) === Number(postId)
+    );
+    
+
+    if (index !== -1) {
+        profilePosts[index] = data;
+    }
+
+    const oldCard = document.getElementById(`post-${postId}`);
+
+    if (oldCard) {
+        oldCard.outerHTML = renderPost(data);
+
+        bindCommentButtons();
+        updateAuthDisplay();
+        updateProfileMode();
+    }
+}
+window.deletePost = deletePost;
+window.openEditPost = openEditPost;
+window.closeEditPost = closeEditPost;
+window.submitEditPost = submitEditPost;

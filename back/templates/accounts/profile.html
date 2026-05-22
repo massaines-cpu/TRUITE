@@ -31,6 +31,7 @@
         <section class="profile-card-clean">
             <div class="profile-cover-clean"></div>
             <div class="profile-info-clean">
+                <button id="generate_image">Générer une image de profil</button>
                 <img id="profile-img"
                      class="profile-photo-clean"
                      src="{% if user.profile_pic %}{{ user.profile_pic.url }}{% else %}/static/images/default-male-avatar.png{% endif %}"

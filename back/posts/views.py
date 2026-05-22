@@ -138,3 +138,60 @@ def create_reply(request, comment_id):
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+@api_view(["PATCH"])
+def update_post(request, post_id):
+    user = get_current_user(request)
+
+    if not user:
+        return Response(
+            {"error": "Authentication required"},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+
+    post = get_object_or_404(Post, id=post_id)
+
+    if post.author != user:
+        return Response(
+            {"error": "Unauthorized"},
+            status=status.HTTP_403_FORBIDDEN
+        )
+
+    content = request.data.get("content")
+    image = request.FILES.get("image")
+
+    if content is not None:
+        post.content = content.strip()
+
+    if image:
+        post.image = image
+
+    post.save()
+
+    serializer = PostSerializer(
+        post,
+        context={"request": request, "user": user}
+    )
+
+    return Response(serializer.data)
+
+@api_view(["DELETE"])
+def delete_post(request, post_id):
+    user = get_current_user(request)
+
+    if not user:
+        return Response(
+            {"error": "Authentication required"},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+
+    post = get_object_or_404(Post, id=post_id)
+
+    if post.author != user:
+        return Response(
+            {"error": "Unauthorized"},
+            status=status.HTTP_403_FORBIDDEN
+        )
+
+    post.delete()
+
+    return Response({"success": True})

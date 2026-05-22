@@ -1,8 +1,8 @@
 from django.urls import path
 from django.urls import path
 from .views import (
-    generate_image,
+    generate_content,
 )
 urlpatterns = [
-    path('generate/', generate_image, name='generate_image'),
+     path("generate/", generate_content, name="generate_content"),
 ]

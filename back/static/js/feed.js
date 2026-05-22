@@ -232,11 +232,75 @@ function renderPost(post) {
                     ${!isMyPost && isAuthenticated()
                         ? `<button type="button" class="mini-follow-btn" onclick="toggleFollow(${post.author_id})">Suivre</button>`
                         : ""}
+
+                     ${isMyPost
+                        ? `
+                            <div class="post-owner-actions">
+
+                                <button
+                                    type="button"
+                                    class="edit-post-btn"
+                                    onclick="openEditPost(${post.id})">
+                                    Modifier
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="delete-post-btn"
+                                    onclick="deletePost(${post.id})">
+                                    Supprimer
+                                </button>
+
+                            </div>
+                        `
+                        : ""
+                    }
+
                 </div>
 
                 <p class="post-text">${escapeHtml(post.content)}</p>
 
                 ${post.image ? `<img class="tweet-image" src="${fixImageUrl(post.image)}" alt="post image">` : ""}
+
+                  ${isMyPost
+                    ? `
+                        <div
+                            class="edit-post-box"
+                            id="edit-box-${post.id}"
+                            style="display:none;"
+                        >
+
+                            <textarea
+                                id="edit-content-${post.id}"
+                            >${escapeHtml(post.content)}</textarea>
+
+                            <input
+                                type="file"
+                                id="edit-image-${post.id}"
+                                accept="image/*"
+                            >
+
+                            <div class="edit-actions">
+
+                                <button
+                                    type="button"
+                                    onclick="submitEditPost(${post.id})">
+                                    Enregistrer
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onclick="closeEditPost(${post.id})">
+                                    Annuler
+                                </button>
+
+                            </div>
+
+                        </div>
+                    `
+                    : ""
+                }
+
 
                 <div class="tweet-actions reaction-row">
                     ${renderReactionButtons("post", post.id, post.reactions_summary, post.user_reaction)}
@@ -293,6 +357,42 @@ function renderComment(comment) {
             </div>
         </div>
     `;
+}
+
+async function deletePost(postId) {
+
+    const confirmed = confirm("Supprimer cette publication ?");
+    if (!confirmed) return;
+
+    const response = await fetch(`/api/posts/${postId}/delete/`, {
+        method: "DELETE",
+        headers: authHeaders()
+    });
+
+    const data = await safeJson(response);
+
+    if (!response.ok) {
+        console.error("Delete error", data);
+        return;
+    }
+
+    const postEl = document.getElementById(`post-${postId}`);
+    if (postEl) {
+        postEl.remove();
+    }
+}
+function renderReactionButtons(target, targetId, summary = {}, selected = null) {
+    return reactionTypes.map(reaction => {
+        const count = summary && summary[reaction.slug] ? summary[reaction.slug] : 0;
+        const activeClass = selected === reaction.slug ? "active" : "";
+
+        return `
+            <button type="button" class="reaction-btn ${activeClass}" onclick="reactTo('${target}', ${targetId}, '${reaction.slug}')" title="${escapeHtml(reaction.label)}">
+                <span class="reaction-emoji">${reaction.emoji}</span>
+                <span class="reaction-count">${count}</span>
+            </button>
+        `;
+    }).join("");
 }
 
 function renderReactionButtons(target, targetId, summary = {}, selected = null) {
@@ -496,3 +596,73 @@ function logoutUser() {
     localStorage.clear();
     window.location.href = "/";
 }
+
+function openEditPost(postId) {
+    const box = document.getElementById(`edit-box-${postId}`);
+
+    if (box) {
+        box.style.display = "block";
+    }
+}
+
+function closeEditPost(postId) {
+    const box = document.getElementById(`edit-box-${postId}`);
+
+    if (box) {
+        box.style.display = "none";
+    }
+}
+async function submitEditPost(postId) {
+
+    const content = document
+        .getElementById(`edit-content-${postId}`)
+        .value
+        .trim();
+
+    const imageInput = document.getElementById(`edit-image-${postId}`);
+
+    const formData = new FormData();
+
+    formData.append("content", content);
+
+    if (imageInput.files[0]) {
+        formData.append("image", imageInput.files[0]);
+    }
+
+    const response = await fetch(`/api/posts/${postId}/update/`, {
+        method: "PATCH",
+        headers: authHeaders(),
+        body: formData
+    });
+
+    const data = await safeJson(response);
+
+    if (!response.ok) {
+        console.error("Update post error", data);
+        return;
+    }
+
+    const index = currentPosts.findIndex(
+        p => Number(p.id) === Number(postId)
+    );
+
+    if (index !== -1) {
+        currentPosts[index] = data;
+    }
+
+    const oldCard = document.getElementById(`post-${postId}`);
+
+    if (oldCard) {
+        oldCard.outerHTML = renderPost(data);
+
+        bindCommentButtons();
+        updateAuthDisplay();
+    }
+}
+
+window.openEditPost = openEditPost;
+window.closeEditPost = closeEditPost;
+window.submitEditPost = submitEditPost;
+window.toggleFollow = toggleFollow;
+window.deletePost = deletePost;
+
