@@ -62,13 +62,15 @@ function showFormMessage(text, isError) {
 }
 
 function getDefaultAvatar(sex = null) {
-    if (sex && sex.toLowerCase() === "female") {
-        return "/static/images/default-female-avatar.png";
-    }
-
-    return "/static/images/default-male-avatar.png";
+    const label = sex && sex.toLowerCase() === "female" ? "F" : "T";
+    const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120">
+            <rect width="120" height="120" rx="60" fill="#e8f5fd"/>
+            <text x="50%" y="55%" text-anchor="middle" font-size="44" font-family="Arial" fill="#1d9bf0" font-weight="bold">${label}</text>
+        </svg>
+    `;
+    return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
 }
-
 function cleanAvatarUrl(url, sex = null) {
     if (!url) return getDefaultAvatar(sex);
 
@@ -774,6 +776,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     currentUser = getStoredUser();
 
     updateAuthDisplay();
+    const logoutBtn = document.getElementById("logout-btn");
+    if (logoutBtn) logoutBtn.addEventListener("click", logoutUser);
+
+
     bindPostForm();
     bindAiPostButton();
     initPostComposerToggle();

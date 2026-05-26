@@ -5,8 +5,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+SESSION = requests.Session()
+PROMPT_CACHE = {}
+
 
 def improve_prompt(prompt):
+    if prompt in PROMPT_CACHE:
+        return PROMPT_CACHE[prompt]
+
     endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
     api_key = os.getenv("AZURE_OPENAI_API_KEY")
     deployment_name = os.getenv("AZURE_OPENAI_DEPLOYMENT")
@@ -34,7 +40,9 @@ def improve_prompt(prompt):
             ],
         )
 
-        return completion.choices[0].message.content
+        improved = completion.choices[0].message.content.strip()
+        PROMPT_CACHE[prompt] = improved
+        return improved
 
     except Exception:
         return prompt
@@ -55,14 +63,14 @@ def generate_image_base64(prompt, width=1024, height=1024):
         "model": "MAI-Image-2e"
     }
 
-    response = requests.post(
+    response = SESSION.post(
         url,
         headers={
             "Content-Type": "application/json",
             "api-key": api_key
         },
         json=payload,
-        timeout=120
+        timeout=60
     )
 
     if response.status_code != 200:

@@ -4,13 +4,19 @@
 {% block title %}Profil - Truitr{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=100">
+<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=110">
 {% endblock %}
 
 {% block content %}
 <main class="truitr-page">
     <aside class="truitr-sidebar">
-        <div class="truitr-logo">Truitr</div>
+        <div class="truitr-logo">
+            <span class="truitr-logo-mark">
+                <img src="{% static 'images/favicon.png' %}" alt="Truitr logo">
+            </span>
+
+            <span>Truitr</span>
+        </div>
 
         <nav class="truitr-menu">
             <a href="/">Accueil</a>
@@ -21,7 +27,7 @@
             <a class="guest-only" href="/register/">S'inscrire</a>
         </nav>
 
-        <button class="truitr-logout auth-only" onclick="logoutUser()">Déconnexion</button>
+        <button class="truitr-logout auth-only" id="logout-btn">Déconnexion</button>
     </aside>
 
     <section class="truitr-main">
@@ -31,18 +37,21 @@
         </header>
 
         <section class="profile-card-clean">
-            <img
-                id="profile-banner"
-                class="profile-cover-clean"
-                src="{% if user.banner_image %}{{ user.banner_image.url }}{% else %}{% static 'images/default-banner.png' %}{% endif %}"
-                alt="Bannière de profil"
-            >
+            <div class="profile-cover-wrap">
+                <img
+                    id="profile-banner"
+                    class="profile-cover-clean"
+                    src=""
+                    alt="Bannière de profil"
+                >
+                <span class="profile-cover-hint self-profile-only auth-only">Changer la bannière</span>
+            </div>
 
             <div class="profile-info-clean">
                 <img
                     id="profile-img"
                     class="profile-photo-clean"
-                    src="{% if user.profile_pic %}{{ user.profile_pic.url }}{% else %}{% static 'images/default-male-avatar.png' %}{% endif %}"
+                    src=""
                     alt="Photo de profil"
                 >
 
@@ -159,5 +168,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/profile.js' %}?v=100"></script>
+<script src="{% static 'js/profile.js' %}?v=110"></script>
 {% endblock %}

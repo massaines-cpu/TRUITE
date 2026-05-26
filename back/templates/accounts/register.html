@@ -5,6 +5,11 @@
 {% block head%}
   <script src="{% static 'js/app.js' %}" defer></script>
 {% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=110">
+{% endblock %}
+
 {% block content %}
 
 <main class="auth-page register-page">
@@ -113,6 +118,13 @@
       <div class="field">
         <label for="image">Photo de profil</label>
         <input type="file" id="image" name="profile_pic" accept="image/*" />
+        <button type="button" id="generate-register-avatar">Générer une photo IA</button>
+        <div id="register-ai-avatar-box" style="display:none; margin-top:10px;">
+          <img id="register-ai-avatar-preview" src="" alt="Aperçu IA" style="width:120px;height:120px;border-radius:50%;object-fit:cover;display:block;margin-bottom:8px;" />
+          <button type="button" id="use-register-ai-avatar">Utiliser cette image</button>
+          <button type="button" id="reject-register-ai-avatar">Refuser / régénérer</button>
+        </div>
+        <p id="register-ai-avatar-msg"></p>
         <img id="apercu" src="" alt="Aperçu" />
       </div>
 

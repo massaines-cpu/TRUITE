@@ -85,12 +85,10 @@ function updateProfileMode() {
     const banner = document.getElementById("profile-banner");
 
     if (img && isMyProfile()) {
-        img.title = "Cliquer pour générer ou changer l'avatar";
         img.style.cursor = "pointer";
     }
 
     if (banner && isMyProfile()) {
-        banner.title = "Cliquer pour générer ou changer la bannière";
         banner.style.cursor = "pointer";
     }
 }
@@ -104,11 +102,29 @@ function showProfileFormMessage(text, isError) {
 }
 
 function getDefaultAvatar(sex = null) {
-    if (sex && sex.toLowerCase() === "female") {
-        return "/static/images/default-female-avatar.png";
-    }
-
-    return "/static/images/default-male-avatar.png";
+    const label = sex && sex.toLowerCase() === "female" ? "F" : "T";
+    const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120">
+            <rect width="120" height="120" rx="60" fill="#e8f5fd"/>
+            <text x="50%" y="55%" text-anchor="middle" font-size="44" font-family="Arial" fill="#1d9bf0" font-weight="bold">${label}</text>
+        </svg>
+    `;
+    return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+}
+function getDefaultBanner() {
+    const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="1344" height="768">
+            <defs>
+                <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#0f1419"/>
+                    <stop offset="0.55" stop-color="#1d9bf0"/>
+                    <stop offset="1" stop-color="#8b5cf6"/>
+                </linearGradient>
+            </defs>
+            <rect width="1344" height="768" fill="url(#g)"/>
+        </svg>
+    `;
+    return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
 }
 
 function cleanAvatarUrl(url, sex = null) {
@@ -345,8 +361,12 @@ function renderProfile(user, posts) {
         img.src = cleanAvatarUrl(user.profile_pic, user.sex);
     }
 
-    if (banner && user.banner_image) {
-        banner.src = fixImageUrl(user.banner_image);
+    if (banner) {
+        banner.onerror = function () {
+            banner.onerror = null;
+            banner.src = getDefaultBanner();
+        };
+        banner.src = user.banner_image ? fixImageUrl(user.banner_image) : getDefaultBanner();
     }
 
     if (postsCount) postsCount.textContent = posts.length;
@@ -1126,6 +1146,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     updateAuthDisplay();
+    document.getElementById("logout-btn")?.addEventListener("click", logoutUser);
     bindPostForm();
     bindProfileEditForm();
     bindInlineProfileEdit();

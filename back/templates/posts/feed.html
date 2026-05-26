@@ -4,13 +4,13 @@
 {% block title %}Accueil - Truitr{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=100">
+<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=110">
 {% endblock %}
 
 {% block content %}
 <main class="truitr-page">
     <aside class="truitr-sidebar">
-        <div class="truitr-logo">Truitr</div>
+        <div class="truitr-logo"><span class="truitr-logo-mark">T</span><span>Truitr</span></div>
 
         <nav class="truitr-menu">
             <a class="active" href="/">Accueil</a>
@@ -21,7 +21,7 @@
             <a class="guest-only" href="/register/">S'inscrire</a>
         </nav>
 
-        <button class="truitr-logout auth-only" onclick="logoutUser()">Déconnexion</button>
+        <button class="truitr-logout auth-only" id="logout-btn">Déconnexion</button>
     </aside>
 
     <section class="truitr-main">
@@ -77,5 +77,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/feed.js' %}?v=100"></script>
+<script src="{% static 'js/feed.js' %}?v=110"></script>
 {% endblock %}

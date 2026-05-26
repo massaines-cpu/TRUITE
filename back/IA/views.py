@@ -10,18 +10,18 @@ from .services import improve_prompt, generate_image_base64
 def generate_content(request):
     user = get_current_user(request)
 
-    if not user:
-        return Response({"error": "Authentication required"}, status=401)
-
     image_type = request.data.get("image_type", "post_image")
     custom_prompt = request.data.get("prompt", "").strip()
+
+    if not user and image_type != "profile_avatar":
+        return Response({"error": "Authentication required"}, status=401)
 
     allowed_types = ["profile_avatar", "profile_banner", "post_image"]
 
     if image_type not in allowed_types:
         return Response({"error": "Invalid image_type"}, status=400)
 
-    sex = getattr(user, "sex", None)
+    sex = getattr(user, "sex", None) if user else request.data.get("sex")
 
     config = get_image_config(
         image_type=image_type,

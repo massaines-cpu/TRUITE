@@ -1,135 +1,147 @@
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-  return '';
-}
+if ($('#login-form').length) {
 
-async function safeJson(response) {
-  try {
-    return await response.json();
-  } catch (error) {
-    return {};
-  }
-}
-
-async function postJson(url, payload) {
-  return fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': getCookie('csrftoken')
-    },
-    body: JSON.stringify(payload)
-  });
-}
-
-function bindLoginForm() {
-  const form = document.getElementById('login-form');
-  if (!form || form.dataset.bound === '1') return;
-  form.dataset.bound = '1';
-
-  form.addEventListener('submit', async function (e) {
+  $('#login-form').on('submit', async function (e) {
     e.preventDefault();
 
-    const response = await postJson('/api/accounts/login/', {
-      username: document.getElementById('username').value.trim(),
-      password: document.getElementById('password').value
-    });
+    const formData = {
+      username: $('#username').val(),
+      password: $('#password').val()
+    };
 
-    const data = await safeJson(response);
+    $.ajax({
+      url: '/api/accounts/login/',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(formData),
 
-    if (!response.ok) {
-      const msg = document.getElementById('login-msg');
-      if (msg) {
-        msg.textContent = 'Nom d’utilisateur ou mot de passe incorrect';
-        msg.style.color = 'red';
+      success: async function (response) {
+        localStorage.clear();
+        localStorage.setItem("token", response.token);
+        localStorage.setItem("user_id", response.user.id);
+        localStorage.setItem("user", JSON.stringify(response.user));
+
+        if (typeof envoyerGeoloc === "function") {
+          await envoyerGeoloc(response.token);
+        }
+
+        window.location.href = "/profile/";
+      },
+
+      error: function (xhr) {
+        $('#login-msg')
+          .html("Nom d’utilisateur ou mot de passe incorrect")
+          .css('color', 'red');
+        console.log(xhr.responseJSON);
       }
-      return;
-    }
-
-    localStorage.clear();
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user_id', data.user.id);
-    localStorage.setItem('user', JSON.stringify(data.user));
-
-    if (typeof envoyerGeoloc === 'function') {
-      try { await envoyerGeoloc(data.token); } catch (error) { console.warn('Geoloc ignored', error); }
-    }
-
-    window.location.href = '/profile/';
+    });
   });
 }
 
-function bindRegisterForm() {
-  const form = document.getElementById('register-form');
-  if (!form || form.dataset.bound === '1') return;
-  form.dataset.bound = '1';
-
-  form.addEventListener('submit', async function (e) {
+if ($('#register-form').length) {
+  $('#register-form').on('submit', function (e) {
     e.preventDefault();
 
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('conf_passw').value;
-    const msg = document.getElementById('register-msg');
-    const passMsg = document.getElementById('passw-msg');
+    const password = $('#password').val();
+    const confirmPassword = $('#conf_passw').val();
 
     if (password !== confirmPassword) {
-      if (passMsg) passMsg.style.display = 'block';
-      if (msg) {
-        msg.textContent = 'Les mots de passe ne correspondent pas.';
-        msg.style.color = 'red';
-      }
+      $('#passw-msg').show().css('color', 'red');
       return;
     }
 
-    if (passMsg) passMsg.style.display = 'none';
+    const formData = new FormData(this);
 
-    const formData = new FormData(form);
-    formData.delete('csrfmiddlewaretoken');
-    formData.delete('conf_passw');
-    formData.delete('nouveau');
+    $.ajax({
+      url: '/api/accounts/register/',
+      type: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,
 
-    const response = await fetch('/api/accounts/register/', {
-      method: 'POST',
-      headers: { 'X-CSRFToken': getCookie('csrftoken') },
-      body: formData
+      success: function () {
+        window.location.href = "/login/";
+      },
+
+      error: function (xhr) {
+        const data = xhr.responseJSON || {};
+        const firstError = Object.values(data)[0];
+        const message = Array.isArray(firstError) ? firstError[0] : "Erreur pendant l'inscription";
+        $('#register-msg').html(message).css('color', 'red');
+        console.log(data);
+      }
     });
+  });
+}
 
-    const data = await safeJson(response);
 
-    if (!response.ok) {
-      if (msg) {
-        msg.textContent = data.username?.[0] || data.email?.[0] || data.password?.[0] || data.error || 'Erreur lors de l’inscription.';
-        msg.style.color = 'red';
+function base64ToFile(base64, filename) {
+  const binary = atob(base64);
+  const array = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    array[i] = binary.charCodeAt(i);
+  }
+  return new File([array], filename, { type: "image/png" });
+}
+
+function setFileInputFile(input, file) {
+  const dataTransfer = new DataTransfer();
+  dataTransfer.items.add(file);
+  input.files = dataTransfer.files;
+}
+
+if ($('#generate-register-avatar').length) {
+  let generatedAvatarFile = null;
+
+  $('#generate-register-avatar').on('click', async function () {
+    const btn = this;
+    const sex = $('input[name="sex"]:checked').val() || 'default';
+
+    btn.disabled = true;
+    btn.textContent = 'Génération...';
+    $('#register-ai-avatar-msg').text('Génération en cours...').css('color', '#536471');
+
+    try {
+      const response = await fetch('/api/ia/generate/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          image_type: 'profile_avatar',
+          sex: sex,
+          prompt: $('#username').val() ? `avatar for username ${$('#username').val()}` : ''
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.image) {
+        $('#register-ai-avatar-msg').text('Erreur pendant la génération.').css('color', 'red');
+        return;
       }
-      return;
-    }
 
-    if (msg) {
-      msg.textContent = 'Compte créé. Redirection vers la connexion...';
-      msg.style.color = 'green';
+      generatedAvatarFile = base64ToFile(data.image, `register_avatar_${Date.now()}.png`);
+      $('#register-ai-avatar-preview').attr('src', `data:image/png;base64,${data.image}`);
+      $('#register-ai-avatar-box').show();
+      $('#register-ai-avatar-msg').text('Image générée. Tu peux l’utiliser ou la refuser.').css('color', 'green');
+    } catch (error) {
+      console.error(error);
+      $('#register-ai-avatar-msg').text('Erreur pendant la génération.').css('color', 'red');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Générer une photo IA';
     }
+  });
 
-    window.location.href = '/login/';
+  $('#use-register-ai-avatar').on('click', function () {
+    if (!generatedAvatarFile) return;
+    setFileInputFile(document.getElementById('image'), generatedAvatarFile);
+    $('#apercu').attr('src', URL.createObjectURL(generatedAvatarFile)).show();
+    $('#register-ai-avatar-msg').text('Image IA sélectionnée pour le compte.').css('color', 'green');
+  });
+
+  $('#reject-register-ai-avatar').on('click', function () {
+    generatedAvatarFile = null;
+    $('#register-ai-avatar-box').hide();
+    $('#register-ai-avatar-preview').attr('src', '');
+    $('#register-ai-avatar-msg').text('Image refusée. Tu peux régénérer.').css('color', '#536471');
   });
 }
-
-function bindProfilePreview() {
-  const imageInput = document.getElementById('image');
-  const preview = document.getElementById('apercu');
-  if (!imageInput || !preview) return;
-
-  imageInput.addEventListener('change', function () {
-    const file = imageInput.files[0];
-    if (!file) return;
-    preview.src = URL.createObjectURL(file);
-    preview.style.display = 'block';
-  });
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-  bindLoginForm();
-  bindRegisterForm();
-  bindProfilePreview();
-});

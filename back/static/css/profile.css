@@ -65,12 +65,7 @@ img {
     padding: 26px 0;
 }
 
-.truitr-logo {
-    font-size: 34px;
-    font-weight: 900;
-    letter-spacing: -1px;
-    margin-bottom: 24px;
-}
+
 
 .truitr-menu {
     display: flex;
@@ -94,18 +89,6 @@ img {
     color: #1d9bf0;
 }
 
-.truitr-logout {
-    width: 100%;
-    margin-top: 22px;
-    border: 0;
-    border-radius: 999px;
-    background: #0f1419;
-    color: white;
-    padding: 14px 18px;
-    font-size: 16px;
-    font-weight: 800;
-    cursor: pointer;
-}
 
 /* =========================
    MAIN CONTENT
@@ -837,3 +820,323 @@ img {
         flex-wrap: wrap;
     }
 }
+
+/* =========================
+   V7 UI POLISH FIXES
+========================= */
+
+.truitr-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+
+.truitr-menu a,
+.truitr-logout,
+#toggle-post-form,
+.composer button,
+.comment-form button,
+.reply-form button,
+.follow-btn,
+.mini-follow-btn,
+.edit-actions button,
+.btn-save,
+.btn-reset,
+#generate_post_image,
+.btn-edit-profile,
+.guest-actions a,
+.auth-page input[type="submit"],
+.auth-page button {
+    border: 0;
+    border-radius: 999px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.btn-edit-profile {
+    background: white;
+    color: #0f1419;
+    border: 1px solid #cfd9de;
+    padding: 10px 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(15,20,25,0.06);
+}
+
+.btn-edit-profile:hover {
+    background: #0f1419;
+    color: white;
+    border-color: #0f1419;
+}
+
+.profile-card-clean {
+    position: relative;
+    overflow: visible;
+    background: white;
+}
+
+.profile-cover-wrap {
+    position: relative;
+    width: 100%;
+    height: 240px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #e8f5fd, #67e8f9);
+}
+
+.profile-cover-clean {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 0;
+}
+
+.profile-cover-hint {
+    position: absolute;
+    right: 18px;
+    bottom: 18px;
+    z-index: 3;
+    opacity: 0;
+    transform: translateY(6px);
+    pointer-events: none;
+    background: rgba(15,20,25,0.82);
+    color: white;
+    padding: 9px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.22);
+    backdrop-filter: blur(6px);
+}
+
+.profile-cover-wrap:hover .profile-cover-hint {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.profile-info-clean {
+    position: relative;
+    z-index: 5;
+    align-items: flex-end;
+}
+
+.profile-photo-clean {
+    position: relative;
+    z-index: 6;
+    box-shadow: 0 10px 26px rgba(15,20,25,0.16);
+}
+
+.profile-photo-clean:hover {
+    transform: translateY(-2px) scale(1.015);
+    box-shadow: 0 14px 34px rgba(15,20,25,0.2);
+}
+
+.guest-box {
+    margin: 18px 24px;
+    padding: 24px;
+    border: 1px solid #e6ecf0;
+    border-radius: 24px;
+    background: linear-gradient(180deg, #ffffff, #f8fbff);
+    box-shadow: 0 12px 30px rgba(15,20,25,0.05);
+}
+
+.guest-box h2 {
+    margin: 0 0 8px;
+    font-size: 26px;
+}
+
+.guest-box p {
+    color: #536471;
+    margin: 0 0 16px;
+}
+
+.guest-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.guest-actions a:first-child {
+    background: #1d9bf0;
+    color: white;
+    padding: 10px 18px;
+}
+
+.guest-actions a:last-child {
+    background: #0f1419;
+    color: white;
+    padding: 10px 18px;
+}
+
+.guest-actions a:hover,
+.auth-page input[type="submit"]:hover,
+.auth-page button:hover,
+.composer button:hover,
+.comment-form button:hover,
+.reply-form button:hover,
+.follow-btn:hover,
+.mini-follow-btn:hover,
+.edit-actions button:hover,
+.btn-save:hover,
+#generate_post_image:hover,
+#toggle-post-form:hover {
+    filter: brightness(0.96);
+    box-shadow: 0 8px 18px rgba(29,155,240,0.18);
+}
+
+#generate_post_image,
+.ai-modal-actions button#ai-modal-generate,
+#generate-register-avatar {
+    background: linear-gradient(135deg, #8b5cf6, #1d9bf0);
+}
+
+.btn-reset,
+.ai-modal-actions button#ai-modal-close {
+    background: #0f1419;
+}
+
+.auth-page {
+    background: white;
+    border: 1px solid #e6ecf0;
+    border-radius: 28px;
+    padding: 28px;
+    box-shadow: 0 18px 50px rgba(15,20,25,0.08);
+}
+
+.auth-page h1 {
+    margin-top: 0;
+    font-size: 30px;
+}
+
+.auth-page form {
+    display: grid;
+    gap: 16px;
+}
+
+.auth-page .field {
+    display: grid;
+    gap: 8px;
+}
+
+.auth-page input[type="text"],
+.auth-page input[type="password"],
+.auth-page input[type="email"],
+.auth-page input[type="date"] {
+    width: 100%;
+    border: 1px solid #d6dde3;
+    border-radius: 16px;
+    padding: 12px 14px;
+    outline: none;
+    font-size: 15px;
+}
+
+.auth-page input[type="text"]:focus,
+.auth-page input[type="password"]:focus,
+.auth-page input[type="email"]:focus,
+.auth-page input[type="date"]:focus {
+    border-color: #1d9bf0;
+    box-shadow: 0 0 0 3px rgba(29,155,240,0.12);
+}
+
+.auth-page input[type="submit"] {
+    background: #1d9bf0;
+    color: white;
+    padding: 12px 18px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.auth-switch {
+    margin: 0;
+    color: #536471;
+}
+
+.auth-switch a {
+    color: #1d9bf0;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.auth-switch a:hover {
+    text-decoration: underline;
+}
+
+
+
+@media (max-width: 760px) {
+    .profile-cover-wrap {
+        height: 180px;
+    }
+
+    .profile-cover-hint {
+        right: 12px;
+        bottom: 12px;
+        font-size: 12px;
+    }
+
+    .guest-box {
+        margin: 14px;
+        padding: 18px;
+    }
+}
+
+
+.truitr-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 34px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    margin-bottom: 24px;
+    line-height: 1;
+}
+
+.truitr-logo-mark {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    max-width: 42px;
+    border-radius: 12px;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #e8f5fd;
+}
+
+.truitr-logo-mark img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+}
+
+
+.post-owner-actions {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+    margin-top: 4px;
+}
+
+.post-owner-actions button {
+    border: 1px solid #cfd9de;
+    background: white;
+    color: #0f1419;
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(15,20,25,0.06);
+    transition: 0.18s ease;
+}
+
+.post-owner-actions button:hover {
+    background: #0f1419;
+    color: white;
+    border-color: #0f1419;
+    transform: translateY(-1px);
+}
+
