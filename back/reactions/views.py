@@ -9,6 +9,8 @@ from posts.models import Comment, Post
 from posts.serializers import CommentSerializer, PostSerializer
 from .models import CommentReaction, PostReaction, ReactionType
 from .serializers import ReactionTypeSerializer
+from notifications.models import Notification
+from notifications.services import create_notification
 
 DEFAULT_REACTION_TYPES = [
     ("like", "J'aime", "👍"),
@@ -95,6 +97,15 @@ def react_to_post(request, post_id):
         PostReaction.objects.create(post=post, user=user, reaction_type=reaction_type)
         selected = reaction_type.slug
 
+    if selected:
+        create_notification(
+            receiver=post.author,
+            sender=user,
+            notification_type=Notification.TYPE_REACTION,
+            message=f"{user.username} a réagi à votre post.",
+            post=post,
+        )
+
     serializer = PostSerializer(post, context={"request": request, "user": user})
     return Response({"selected": selected, "post": serializer.data}, status=status.HTTP_200_OK)
 
@@ -124,6 +135,16 @@ def react_to_comment(request, comment_id):
     else:
         CommentReaction.objects.create(comment=comment, user=user, reaction_type=reaction_type)
         selected = reaction_type.slug
+
+    if selected:
+        create_notification(
+            receiver=comment.author,
+            sender=user,
+            notification_type=Notification.TYPE_REACTION,
+            message=f"{user.username} a réagi à votre commentaire.",
+            post=comment.post,
+            comment=comment,
+        )
 
     serializer = CommentSerializer(comment, context={"request": request, "user": user})
     return Response({"selected": selected, "comment": serializer.data}, status=status.HTTP_200_OK)

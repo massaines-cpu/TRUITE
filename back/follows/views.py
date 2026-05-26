@@ -5,6 +5,8 @@ from django.utils import timezone
 
 from accounts.models import User, AuthToken
 from .models import Follow
+from notifications.models import Notification
+from notifications.services import create_notification
 
 
 def get_current_user(request):
@@ -90,6 +92,14 @@ def toggle_follow(request, user_id):
             follower=follower,
             following=following
         )
+
+        create_notification(
+            receiver=following,
+            sender=follower,
+            notification_type=Notification.TYPE_FOLLOW,
+            message=f"{follower.username} vous suit maintenant.",
+        )
+
         is_following = True
         message = "Followed"
 

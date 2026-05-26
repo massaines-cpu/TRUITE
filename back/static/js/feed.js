@@ -114,6 +114,51 @@ function escapeHtml(value) {
         .replaceAll("'", "&#039;");
 }
 
+
+function renderContentText(value) {
+    let safe = escapeHtml(String(value || "").trim());
+
+    safe = safe.replace(/(^|\s)(#[A-Za-z0-9_\-À-ÿ]+)/g, function (match, prefix, tag) {
+        const href = `/?search=${encodeURIComponent(tag)}`;
+        return `${prefix}<a class="inline-social-link hashtag-link" href="${href}" onclick="event.stopPropagation()">${tag}</a>`;
+    });
+
+    safe = safe.replace(/(^|\s)(@[A-Za-z0-9_\.\-]+)/g, function (match, prefix, mention) {
+        const href = `/?search=${encodeURIComponent(mention)}`;
+        return `${prefix}<a class="inline-social-link mention-link" href="${href}" onclick="event.stopPropagation()">${mention}</a>`;
+    });
+
+    return safe;
+}
+
+function startTypingStatus(element, username = "Robot") {
+    if (!element) return null;
+
+    const messages = [
+        `${username}, ton image se prépare...`,
+        "Un peu de magie arrive...",
+        "La truite cherche la bonne lumière...",
+        "Presque prêt..."
+    ];
+
+    let messageIndex = 0;
+    let charIndex = 0;
+
+    element.textContent = "";
+
+    return setInterval(function () {
+        const message = messages[messageIndex];
+
+        element.textContent = message.slice(0, charIndex + 1);
+        charIndex += 1;
+
+        if (charIndex >= message.length) {
+            charIndex = 0;
+            messageIndex = (messageIndex + 1) % messages.length;
+        }
+    }, 55);
+}
+
 function profileUrl(userId) {
     return `/profile/?user_id=${userId}`;
 }
@@ -200,7 +245,7 @@ function openAiPostImageModal() {
     generateBtn.onclick = async function () {
         generateBtn.disabled = true;
         generateBtn.textContent = "Génération...";
-        message.textContent = "";
+        const typingTimer = startTypingStatus(message, currentUser?.username || "Robot");
 
         const response = await fetch("/api/ia/generate/", {
             method: "POST",
@@ -216,6 +261,7 @@ function openAiPostImageModal() {
 
         const data = await safeJson(response);
 
+        clearInterval(typingTimer);
         generateBtn.disabled = false;
         generateBtn.textContent = "Générer";
 
@@ -224,6 +270,8 @@ function openAiPostImageModal() {
             message.textContent = "Erreur pendant la génération.";
             return;
         }
+
+        message.textContent = "Image prête. Tu peux l'utiliser ou régénérer.";
 
         generatedFile = base64ToFile(data.image, `post_image_${Date.now()}.png`);
         preview.src = `data:image/png;base64,${data.image}`;
@@ -410,7 +458,7 @@ function renderPost(post) {
                 </div>
 
                 <p class="post-text ${isMyPost ? "editable-post-text" : ""}" onclick="${isMyPost ? `openEditPost(${post.id})` : ""}">
-                    ${escapeHtml(post.content.trim())}
+                    ${renderContentText(post.content)}
                 </p>
 
                 ${post.image ? `
@@ -424,7 +472,7 @@ function renderPost(post) {
 
                 ${isMyPost ? `
                     <div class="edit-post-box" id="edit-box-${post.id}" style="display:none;">
-                        <textarea id="edit-content-${post.id}">${escapeHtml(post.content.trim())}</textarea>
+                        <textarea id="edit-content-${post.id}">${renderContentText(post.content)}</textarea>
                         <input type="file" id="edit-image-${post.id}" accept="image/*">
 
                         <div class="edit-actions">
@@ -471,7 +519,7 @@ function renderComment(comment) {
                     </a>
                 </div>
 
-                <p>${escapeHtml(comment.content)}</p>
+                <p>${renderContentText(comment.content)}</p>
 
                 <div class="comment-actions reaction-row">
                     ${renderReactionButtons("comment", comment.id, comment.reactions_summary, comment.user_reaction)}

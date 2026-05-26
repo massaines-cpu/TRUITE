@@ -4,7 +4,7 @@
 {% block title %}Profil - Truitr{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=110">
+<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=120">
 {% endblock %}
 
 {% block content %}
@@ -22,7 +22,7 @@
             <a href="/">Accueil</a>
             <a class="active auth-only" href="/profile/">Profil</a>
             <a href="#">Messages</a>
-            <a href="#">Recherche</a>
+            <a href="#" id="search-open">Recherche</a>
             <a class="guest-only" href="/login/">Se connecter</a>
             <a class="guest-only" href="/register/">S'inscrire</a>
         </nav>
@@ -34,6 +34,12 @@
         <header class="truitr-header">
             <h1>Profil</h1>
             <p id="user-handle">@{{ user.username }}</p>
+            <div class="header-actions auth-only">
+                <button type="button" id="search-open-btn" class="header-action-btn">Recherche</button>
+                <button type="button" id="notifications-open-btn" class="header-action-btn notification-btn">
+                    🔔 <span id="notifications-count" style="display:none;">0</span>
+                </button>
+            </div>
         </header>
 
         <section class="profile-card-clean">
@@ -168,5 +174,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/profile.js' %}?v=110"></script>
+<script src="{% static 'js/social_tools.js' %}?v=120"></script>
+<script src="{% static 'js/profile.js' %}?v=120"></script>
 {% endblock %}

@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from datetime import timedelta
 from rest_framework import status
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
@@ -8,6 +9,8 @@ from rest_framework.response import Response
 from accounts.models import AuthToken, User
 from .models import Comment, Post
 from .serializers import CommentSerializer, PostSerializer
+from notifications.models import Notification
+from notifications.services import create_notification, notify_mentions
 
 
 def get_current_user(request):
@@ -48,7 +51,6 @@ def posts_list_create(request):
             "comments__reactions__reaction_type",
         )
         posts = posts[:50]
-        posts = posts[:50]
         serializer = PostSerializer(posts, many=True, context={"request": request, "user": user})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -64,7 +66,26 @@ def posts_list_create(request):
     if not image:
         return Response({"image": ["Image obligatoire."]}, status=status.HTTP_400_BAD_REQUEST)
 
+    last_post = Post.objects.filter(author=user).order_by("-created_at").first()
+
+    if last_post:
+        seconds_since_last = (timezone.now() - last_post.created_at).total_seconds()
+
+        if seconds_since_last < 5:
+            return Response(
+                {"error": "Veuillez attendre quelques secondes avant de publier à nouveau."},
+                status=status.HTTP_429_TOO_MANY_REQUESTS,
+            )
+
+        if last_post.content.strip().lower() == content.lower():
+            return Response(
+                {"error": "Ce contenu vient déjà d'être publié."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
     post = Post.objects.create(author=user, content=content, image=image)
+    notify_mentions(content, sender=user, post=post)
+
     serializer = PostSerializer(post, context={"request": request, "user": user})
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -114,6 +135,17 @@ def create_comment(request, post_id):
         return Response({"content": ["Content is required."]}, status=status.HTTP_400_BAD_REQUEST)
 
     comment = Comment.objects.create(post=post, author=user, content=content)
+
+    create_notification(
+        receiver=post.author,
+        sender=user,
+        notification_type=Notification.TYPE_COMMENT,
+        message=f"{user.username} a commenté votre post.",
+        post=post,
+        comment=comment,
+    )
+    notify_mentions(content, sender=user, post=post, comment=comment)
+
     serializer = CommentSerializer(comment, context={"request": request, "user": user})
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -136,6 +168,17 @@ def create_reply(request, comment_id):
         author=user,
         content=content,
     )
+
+    create_notification(
+        receiver=parent.author,
+        sender=user,
+        notification_type=Notification.TYPE_REPLY,
+        message=f"{user.username} a répondu à votre commentaire.",
+        post=parent.post,
+        comment=reply,
+    )
+    notify_mentions(content, sender=user, post=parent.post, comment=reply)
+
     serializer = CommentSerializer(reply, context={"request": request, "user": user})
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -161,13 +204,19 @@ def update_post(request, post_id):
     content = request.data.get("content")
     image = request.FILES.get("image")
 
+    content_changed = False
+
     if content is not None:
         post.content = content.strip()
+        content_changed = True
 
     if image:
         post.image = image
 
     post.save()
+
+    if content_changed:
+        notify_mentions(post.content, sender=user, post=post)
 
     serializer = PostSerializer(
         post,
