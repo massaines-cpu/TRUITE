@@ -8,6 +8,7 @@ class Notification(models.Model):
     TYPE_COMMENT = "comment"
     TYPE_REACTION = "reaction"
     TYPE_REPLY = "reply"
+    TYPE_MESSAGE = "message"
 
     NOTIFICATION_TYPES = [
         (TYPE_FOLLOW, "Follow"),
@@ -15,6 +16,7 @@ class Notification(models.Model):
         (TYPE_COMMENT, "Comment"),
         (TYPE_REACTION, "Reaction"),
         (TYPE_REPLY, "Reply"),
+        (TYPE_MESSAGE, "Message"),
     ]
 
     receiver = models.ForeignKey(

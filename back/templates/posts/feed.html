@@ -4,7 +4,7 @@
 {% block title %}Accueil - Truitr{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=128">
+<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=130">
 {% endblock %}
 
 {% block content %}
@@ -20,7 +20,7 @@
         <nav class="truitr-menu">
             <a class="active" href="/">Accueil</a>
             <a class="auth-only" href="/profile/">Profil</a>
-            <a href="#">Messages</a>
+            <a class="auth-only" href="/messages/">Messages</a>
             <a href="#" id="search-open">Recherche</a>
             <a class="guest-only" href="/login/">Se connecter</a>
             <a class="guest-only" href="/register/">S'inscrire</a>
@@ -88,6 +88,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/social_tools.js' %}?v=129"></script>
+<script src="{% static 'js/social_tools.js' %}?v=130"></script>
 <script src="{% static 'js/feed.js' %}?v=130"></script>
 {% endblock %}

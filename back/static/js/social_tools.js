@@ -207,6 +207,7 @@ async function loadNotifications(showPanel = false) {
 }
 
 function notificationTargetUrl(item) {
+    if (item.notification_type === "message") return "/messages/";
     if (item.post_id) return `/#post-${item.post_id}`;
     if (item.sender_id) return `/profile/?user_id=${item.sender_id}`;
     return "/";

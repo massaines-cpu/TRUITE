@@ -1240,6 +1240,15 @@ document.addEventListener("DOMContentLoaded", async function () {
         editBtn.addEventListener("click", toggleEditProfile);
     }
 
+    const messageBtn = document.getElementById("profile-message-btn");
+    if (messageBtn) {
+        messageBtn.addEventListener("click", function () {
+            if (profileUserId) {
+                window.location.href = `/messages/?user_id=${profileUserId}`;
+            }
+        });
+    }
+
     await loadReactionTypes();
     await fetchUserProfile();
     await loadSuggestions();

@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'IA',
     'notifications',
     'social_search',
+    'direct_messages',
     'storages',
 
 ]

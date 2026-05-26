@@ -30,6 +30,8 @@ urlpatterns = [
     path("api/blockchain/", include("blockchain.urls")),
     path("api/notifications/", include("notifications.urls")),
     path("api/search/", include("social_search.urls")),
+    path("messages/", include("direct_messages.urls")),
+    path("api/messages/", include("direct_messages.urls")),
 
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),

@@ -4,7 +4,7 @@
 {% block title %}Profil - Truitr{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=129">
+<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=130">
 {% endblock %}
 
 {% block content %}
@@ -21,7 +21,7 @@
         <nav class="truitr-menu">
             <a href="/">Accueil</a>
             <a class="active auth-only" href="/profile/">Profil</a>
-            <a href="#">Messages</a>
+            <a class="auth-only" href="/messages/">Messages</a>
             <a href="#" id="search-open">Recherche</a>
             <a class="guest-only" href="/login/">Se connecter</a>
             <a class="guest-only" href="/register/">S'inscrire</a>
@@ -72,6 +72,10 @@
 
                 <button id="profile-follow-btn" class="follow-btn other-profile-only" onclick="toggleFollow()">
                     Suivre
+                </button>
+
+                <button id="profile-message-btn" class="btn-edit-profile other-profile-only" type="button">
+                    Message
                 </button>
             </div>
 
@@ -174,6 +178,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/social_tools.js' %}?v=128"></script>
-<script src="{% static 'js/profile.js' %}?v=128"></script>
+<script src="{% static 'js/social_tools.js' %}?v=130"></script>
+<script src="{% static 'js/profile.js' %}?v=130"></script>
 {% endblock %}
