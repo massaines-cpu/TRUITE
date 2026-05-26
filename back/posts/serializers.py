@@ -19,6 +19,7 @@ class CommentSerializer(serializers.ModelSerializer):
     author_sex = serializers.CharField(source="author.sex", read_only=True)
     author_profile_pic = serializers.ImageField(source="author.profile_pic", read_only=True)
     reactions_summary = serializers.SerializerMethodField()
+    reaction_users = serializers.SerializerMethodField()
     user_reaction = serializers.SerializerMethodField()
     replies = serializers.SerializerMethodField()
 
@@ -34,6 +35,7 @@ class CommentSerializer(serializers.ModelSerializer):
             "author_profile_pic",
             "content",
             "reactions_summary",
+            "reaction_users",
             "user_reaction",
             "replies",
             "created_at",
@@ -47,6 +49,7 @@ class CommentSerializer(serializers.ModelSerializer):
             "author_sex",
             "author_profile_pic",
             "reactions_summary",
+            "reaction_users",
             "user_reaction",
             "replies",
             "created_at",
@@ -57,6 +60,12 @@ class CommentSerializer(serializers.ModelSerializer):
         for reaction in obj.reactions.select_related("reaction_type").all():
             summary[reaction.reaction_type.slug] = summary.get(reaction.reaction_type.slug, 0) + 1
         return summary
+
+    def get_reaction_users(self, obj):
+        users_by_reaction = {reaction.slug: [] for reaction in get_active_reactions()}
+        for reaction in obj.reactions.select_related("reaction_type", "user").all():
+            users_by_reaction.setdefault(reaction.reaction_type.slug, []).append(reaction.user.username)
+        return users_by_reaction
 
     def get_user_reaction(self, obj):
         user = self.context.get("user")
@@ -81,6 +90,7 @@ class PostSerializer(serializers.ModelSerializer):
     comments = serializers.SerializerMethodField()
     comments_count = serializers.SerializerMethodField()
     reactions_summary = serializers.SerializerMethodField()
+    reaction_users = serializers.SerializerMethodField()
     user_reaction = serializers.SerializerMethodField()
 
     class Meta:
@@ -96,6 +106,7 @@ class PostSerializer(serializers.ModelSerializer):
             "comments",
             "comments_count",
             "reactions_summary",
+            "reaction_users",
             "user_reaction",
             "created_at",
             "updated_at",
@@ -109,6 +120,7 @@ class PostSerializer(serializers.ModelSerializer):
             "comments",
             "comments_count",
             "reactions_summary",
+            "reaction_users",
             "user_reaction",
             "created_at",
             "updated_at",
@@ -135,6 +147,12 @@ class PostSerializer(serializers.ModelSerializer):
         for reaction in obj.reactions.select_related("reaction_type").all():
             summary[reaction.reaction_type.slug] = summary.get(reaction.reaction_type.slug, 0) + 1
         return summary
+
+    def get_reaction_users(self, obj):
+        users_by_reaction = {reaction.slug: [] for reaction in get_active_reactions()}
+        for reaction in obj.reactions.select_related("reaction_type", "user").all():
+            users_by_reaction.setdefault(reaction.reaction_type.slug, []).append(reaction.user.username)
+        return users_by_reaction
 
     def get_user_reaction(self, obj):
         user = self.context.get("user")

@@ -102,7 +102,40 @@ function formatDate(value) {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return "";
 
+    const diffSeconds = Math.floor((Date.now() - date.getTime()) / 1000);
+
+    if (diffSeconds < 60) return "à l’instant";
+    if (diffSeconds < 3600) return `il y a ${Math.floor(diffSeconds / 60)} min`;
+    if (diffSeconds < 86400) return `il y a ${Math.floor(diffSeconds / 3600)} h`;
+    if (diffSeconds < 604800) return `il y a ${Math.floor(diffSeconds / 86400)} j`;
+
+    return date.toLocaleString("fr-FR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+}
+
+function fullDateTitle(value) {
+    if (!value) return "";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "";
     return date.toLocaleString("fr-FR");
+}
+
+function reactionTitle(reaction, users = {}) {
+    const names = users && users[reaction.slug] ? users[reaction.slug] : [];
+
+    if (!names.length) {
+        return reaction.label;
+    }
+
+    const visibleNames = names.slice(0, 8).join(", ");
+    const more = names.length > 8 ? ` et ${names.length - 8} autre(s)` : "";
+
+    return `${reaction.label}: ${visibleNames}${more}`;
 }
 
 function escapeHtml(value) {
@@ -443,7 +476,7 @@ function renderPost(post) {
                         <span>@${escapeHtml(post.author)}</span>
                     </a>
 
-                    <span class="post-date">${formatDate(post.created_at)}</span>
+                    <span class="post-date" title="${fullDateTitle(post.created_at)}">${formatDate(post.created_at)}</span>
 
                     ${!isMyPost && isAuthenticated()
                         ? `<button type="button" class="mini-follow-btn" onclick="toggleFollow(${post.author_id})">Suivre</button>`
@@ -483,7 +516,7 @@ function renderPost(post) {
                 ` : ""}
 
                 <div class="tweet-actions reaction-row">
-                    ${renderReactionButtons("post", post.id, post.reactions_summary, post.user_reaction)}
+                    ${renderReactionButtons("post", post.id, post.reactions_summary, post.user_reaction, post.reaction_users)}
                     <span class="comment-count">💬 ${post.comments_count || 0}</span>
                 </div>
 
@@ -517,12 +550,13 @@ function renderComment(comment) {
                         <strong>${escapeHtml(comment.author)}</strong>
                         <span>@${escapeHtml(comment.author)}</span>
                     </a>
+                    <small class="comment-date" title="${fullDateTitle(comment.created_at)}">${formatDate(comment.created_at)}</small>
                 </div>
 
                 <p>${renderContentText(comment.content)}</p>
 
                 <div class="comment-actions reaction-row">
-                    ${renderReactionButtons("comment", comment.id, comment.reactions_summary, comment.user_reaction)}
+                    ${renderReactionButtons("comment", comment.id, comment.reactions_summary, comment.user_reaction, comment.reaction_users)}
                     <button type="button" class="reply-toggle auth-only" onclick="toggleReplyForm(${comment.id})">Répondre</button>
                 </div>
 
@@ -539,13 +573,13 @@ function renderComment(comment) {
     `;
 }
 
-function renderReactionButtons(target, targetId, summary = {}, selected = null) {
+function renderReactionButtons(target, targetId, summary = {}, selected = null, users = {}) {
     return reactionTypes.map(reaction => {
         const count = summary && summary[reaction.slug] ? summary[reaction.slug] : 0;
         const activeClass = selected === reaction.slug ? "active" : "";
 
         return `
-            <button type="button" class="reaction-btn ${activeClass}" onclick="reactTo('${target}', ${targetId}, '${reaction.slug}')" title="${escapeHtml(reaction.label)}">
+            <button type="button" class="reaction-btn ${activeClass}" onclick="reactTo('${target}', ${targetId}, '${reaction.slug}')" title="${escapeHtml(reactionTitle(reaction, users))}">
                 <span class="reaction-emoji">${reaction.emoji}</span>
                 <span class="reaction-count">${count}</span>
             </button>

@@ -233,6 +233,11 @@ function toggleNotificationsPanel(forceOpen = null) {
     panel.style.display = shouldOpen ? "block" : "none";
 }
 
+function closeNotificationsPanel() {
+    const panel = document.getElementById("notifications-panel");
+    if (panel) panel.style.display = "none";
+}
+
 function bindSocialTools() {
     document.querySelectorAll("#search-open, #search-open-btn").forEach(btn => {
         btn.addEventListener("click", function (event) {
@@ -243,10 +248,31 @@ function bindSocialTools() {
 
     const notificationsBtn = document.getElementById("notifications-open-btn");
     if (notificationsBtn) {
-        notificationsBtn.addEventListener("click", async function () {
+        notificationsBtn.addEventListener("click", async function (event) {
+            event.preventDefault();
+            event.stopPropagation();
             await loadNotifications(true);
         });
     }
+
+
+    document.addEventListener("click", function (event) {
+        const panel = document.getElementById("notifications-panel");
+        const btn = document.getElementById("notifications-open-btn");
+
+        if (!panel || panel.style.display === "none") return;
+        if (panel.contains(event.target) || (btn && btn.contains(event.target))) return;
+
+        closeNotificationsPanel();
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            closeNotificationsPanel();
+            const searchModal = document.getElementById("search-modal");
+            if (searchModal) searchModal.style.display = "none";
+        }
+    });
 
     const params = new URLSearchParams(window.location.search);
     const initialSearch = params.get("search");

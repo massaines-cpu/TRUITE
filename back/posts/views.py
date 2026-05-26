@@ -48,7 +48,9 @@ def posts_list_create(request):
             "comments__replies",
             "comments__replies__author",
             "reactions__reaction_type",
+            "reactions__user",
             "comments__reactions__reaction_type",
+            "comments__reactions__user",
         )
         posts = posts[:50]
         serializer = PostSerializer(posts, many=True, context={"request": request, "user": user})
@@ -99,7 +101,9 @@ def post_detail(request, post_id):
             "comments__replies",
             "comments__replies__author",
             "reactions__reaction_type",
+            "reactions__user",
             "comments__reactions__reaction_type",
+            "comments__reactions__user",
         ),
         id=post_id,
     )
@@ -116,7 +120,9 @@ def user_posts(request, user_id):
         "comments__replies",
         "comments__replies__author",
         "reactions__reaction_type",
+            "reactions__user",
         "comments__reactions__reaction_type",
+            "comments__reactions__user",
     )
     serializer = PostSerializer(posts, many=True, context={"request": request, "user": user})
     return Response(serializer.data, status=status.HTTP_200_OK)

@@ -1395,3 +1395,17 @@ img {
         width: auto;
     }
 }
+
+/* =========================
+   PHASE 1.1 SMALL UX FIXES
+========================= */
+.comment-date {
+    color: #536471;
+    font-size: 12px;
+    margin-left: 4px;
+    white-space: nowrap;
+}
+
+.reaction-btn[title] {
+    position: relative;
+}
