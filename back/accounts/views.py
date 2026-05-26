@@ -2,7 +2,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import logout
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.core.files.base import ContentFile
 
+import base64
 import secrets
 from datetime import timedelta
 from django.utils import timezone
@@ -53,14 +55,48 @@ def home_view(request):
     return render(request, "posts/feed.html")
 
 
+def generate_default_profile_avatar(user):
+    if user.profile_pic and "default" not in str(user.profile_pic):
+        return
+
+    try:
+        from IA.prompts import get_image_config
+        from IA.services import improve_prompt, generate_image_base64
+
+        config = get_image_config(
+            image_type="profile_avatar",
+            sex=user.sex,
+            custom_prompt=f"avatar for username {user.username}"
+        )
+        prompt = improve_prompt(config["prompt"])
+        image_b64 = generate_image_base64(
+            prompt=prompt,
+            width=config["width"],
+            height=config["height"]
+        )
+
+        if not image_b64:
+            return
+
+        image_data = base64.b64decode(image_b64)
+        safe_username = "".join(c for c in user.username if c.isalnum() or c in ["_", "-"])
+        filename = f"profile_avatar_{safe_username}_{user.id}.png"
+        user.profile_pic.save(filename, ContentFile(image_data), save=True)
+    except Exception as error:
+        print("Default avatar generation failed:", error)
+
+
 @extend_schema(request=UserSerializer, responses=UserSerializer)
 @api_view(["POST"])
+@parser_classes([MultiPartParser, FormParser])
 def register(request):
     serializer = UserSerializer(data=request.data)
 
     if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        user = serializer.save()
+        if not request.FILES.get("profile_pic"):
+            generate_default_profile_avatar(user)
+        return Response({"user": UserSerializer(user).data, "redirect": "/login/"}, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

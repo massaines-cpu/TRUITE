@@ -7,6 +7,7 @@ let profileUserId = null;
 let generatedAvatarFile = null;
 let generatedBannerFile = null;
 let generatedPostImageFile = null;
+let generatedEditPostImageFiles = {};
 
 const DEFAULT_REACTIONS = [
     { slug: "like", label: "J'aime", emoji: "👍" },
@@ -631,6 +632,8 @@ function renderPost(post) {
                     <div class="edit-post-box" id="edit-box-${post.id}" style="display:none;">
                         <textarea id="edit-content-${post.id}">${escapeHtml(post.content)}</textarea>
                         <input type="file" id="edit-image-${post.id}" accept="image/*">
+                        <button type="button" onclick="generateEditPostImage(${post.id})">Générer une nouvelle image avec l'IA</button>
+                        <img id="edit-ai-preview-${post.id}" style="display:none;max-width:220px;margin-top:10px;border-radius:12px;" alt="Aperçu IA">
 
                         <div class="edit-actions">
                             <button type="button" onclick="submitEditPost(${post.id})">Enregistrer</button>
@@ -946,6 +949,8 @@ async function submitEditPost(postId) {
 
     if (imageInput.files[0]) {
         formData.append("image", imageInput.files[0]);
+    } else if (generatedEditPostImageFiles[postId]) {
+        formData.append("image", generatedEditPostImageFiles[postId]);
     }
 
     const response = await fetch(`/api/posts/${postId}/update/`, {
@@ -971,10 +976,34 @@ async function submitEditPost(postId) {
 
     if (oldCard) {
         oldCard.outerHTML = renderPost(data);
+        delete generatedEditPostImageFiles[postId];
         bindCommentButtons();
         updateAuthDisplay();
         updateProfileMode();
     }
+}
+
+function generateEditPostImage(postId) {
+    const contentInput = document.getElementById(`edit-content-${postId}`);
+    const prompt = contentInput ? contentInput.value.trim() : "";
+
+    openAiImageModal({
+        title: "Générer une image pour ce post",
+        imageType: "post_image",
+        onApply: async function (file, previewSrc) {
+            generatedEditPostImageFiles[postId] = file;
+            const input = document.getElementById(`edit-image-${postId}`);
+            if (input) input.value = "";
+            const preview = document.getElementById(`edit-ai-preview-${postId}`);
+            if (preview) {
+                preview.src = previewSrc;
+                preview.style.display = "block";
+            }
+        }
+    });
+
+    const promptInput = document.getElementById("ai-modal-prompt");
+    if (promptInput && prompt) promptInput.value = prompt;
 }
 
 function toggleEditProfile() {
@@ -1121,4 +1150,5 @@ window.deletePost = deletePost;
 window.openEditPost = openEditPost;
 window.closeEditPost = closeEditPost;
 window.submitEditPost = submitEditPost;
+window.generateEditPostImage = generateEditPostImage;
 window.logoutUser = logoutUser;

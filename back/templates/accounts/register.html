@@ -10,7 +10,7 @@
 <main class="auth-page register-page">
     <h1>Page d'inscription</h1>
 
-    <form action="/api/accounts/register/" method="post" enctype="multipart/form-data">
+    <form id="register-form" action="/api/accounts/register/" method="post" enctype="multipart/form-data">
       {% csrf_token %}
 
       <div class="field">
@@ -116,7 +116,11 @@
         <img id="apercu" src="" alt="Aperçu" />
       </div>
 
+      <p id="register-msg"></p>
+
       <input type="submit" name="nouveau" value="S'inscrire" />
+
+      <p class="auth-switch">Déjà un compte ? <a href="/login/">Se connecter</a></p>
 
     </form>
 

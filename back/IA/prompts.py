@@ -1,8 +1,8 @@
 IMAGE_CONFIGS = {
     "profile_avatar": {
         "size": {
-            "width": 1024,
-            "height": 1024,
+            "width": 512,
+            "height": 512,
         },
         "prompts": {
             "male": "Une truite bleu avec une moustache et un costume noir avec une cravate",
@@ -13,8 +13,8 @@ IMAGE_CONFIGS = {
 
     "profile_banner": {
         "size": {
-            "width": 1344,
-            "height": 768,
+            "width": 768,
+            "height": 432,
         },
         "prompts": {
             "male": "Une banière qui repressente des truites un male qui drague une fille avec un message drôle sur ça",
@@ -25,8 +25,8 @@ IMAGE_CONFIGS = {
 
     "post_image": {
         "size": {
-            "width": 1024,
-            "height": 1024,
+            "width": 512,
+            "height": 512,
         },
         "prompts": {
             "male": "Une truite bleu dans l'image",

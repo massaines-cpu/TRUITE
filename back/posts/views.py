@@ -47,6 +47,8 @@ def posts_list_create(request):
             "reactions__reaction_type",
             "comments__reactions__reaction_type",
         )
+        posts = posts[:50]
+        posts = posts[:50]
         serializer = PostSerializer(posts, many=True, context={"request": request, "user": user})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
