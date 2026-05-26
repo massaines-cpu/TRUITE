@@ -1,9 +1,14 @@
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+import traceback
 from rest_framework import status
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from agent.core import trigger_automatic_comment
 
 from accounts.models import AuthToken, User
 from .models import Comment, Post
@@ -63,6 +68,11 @@ def posts_list_create(request):
         return Response({"image": ["Image obligatoire."]}, status=status.HTTP_400_BAD_REQUEST)
 
     post = Post.objects.create(author=user, content=content, image=image)
+    
+    # Déclencher le commentaire automatique de l'agent si l'utilisateur est un humain
+    if user.first_name != "Bot":
+        trigger_automatic_comment(post.id, post.content)
+        
     serializer = PostSerializer(post, context={"request": request, "user": user})
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 

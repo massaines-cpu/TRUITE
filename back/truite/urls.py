@@ -24,6 +24,7 @@ urlpatterns = [
 
     path("api/ia/", include("IA.urls")),
     path("api/accounts/", include("accounts.urls")),
+    path("api/agent/", include("agent.urls")),
     path("api/posts/", include("posts.urls")),
     path("api/reactions/", include("reactions.urls")),
     path("api/follows/", include("follows.urls")),

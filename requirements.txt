@@ -19,3 +19,9 @@ gunicorn
 whitenoise
 requests
 openai
+langchain
+langchain-openai
+pydantic
+duckduckgo-search
+wikipedia
+langchain-community
