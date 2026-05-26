@@ -3,6 +3,11 @@
 
 {% block title %}Page de connexion{% endblock %}
 
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=110">
+{% endblock %}
+
 {% block content %}
 
 <main class="auth-page">
@@ -29,6 +34,8 @@
     <p id="login-msg"></p>
 
     <input type="submit" value="Se connecter" />
+
+    <p class="auth-switch">Pas encore de compte ? <a href="/register/">Créer un compte</a></p>
   </form>
 
 </main>

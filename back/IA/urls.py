@@ -1,8 +1,6 @@
 from django.urls import path
-from django.urls import path
-from .views import (
-    generate_content,
-)
+from .views import generate_content
+
 urlpatterns = [
-     path("generate/", generate_content, name="generate_content"),
+    path("generate/", generate_content, name="generate_content"),
 ]

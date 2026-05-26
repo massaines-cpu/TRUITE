@@ -2,7 +2,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import logout
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.core.files.base import ContentFile
 
+import base64
 import secrets
 from datetime import timedelta
 from django.utils import timezone
@@ -53,14 +55,18 @@ def home_view(request):
     return render(request, "posts/feed.html")
 
 
+# No automatic image generation on register.
+# Users can upload a picture during registration or generate one manually later.
+
 @extend_schema(request=UserSerializer, responses=UserSerializer)
 @api_view(["POST"])
+@parser_classes([MultiPartParser, FormParser])
 def register(request):
     serializer = UserSerializer(data=request.data)
 
     if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        user = serializer.save()
+        return Response({"user": UserSerializer(user).data, "redirect": "/login/"}, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -253,6 +259,9 @@ def update_profile(request):
 
     if request.FILES.get("profile_pic"):
         user.profile_pic = request.FILES["profile_pic"]
+
+    if request.FILES.get("banner_image"):
+        user.banner_image = request.FILES["banner_image"]
 
     user.save()
 

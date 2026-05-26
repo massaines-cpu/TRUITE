@@ -4,40 +4,64 @@
 {% block title %}Accueil - Truitr{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=90">
+<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=120">
 {% endblock %}
 
 {% block content %}
 <main class="truitr-page">
     <aside class="truitr-sidebar">
-        <div class="truitr-logo">Truitr</div>
+        <div class="truitr-logo">
+            <span class="truitr-logo-mark">
+                <img src="{% static 'images/favicon.png' %}" alt="Truitr logo">
+            </span>
+            <span>Truitr</span>
+        </div>
+
         <nav class="truitr-menu">
             <a class="active" href="/">Accueil</a>
             <a class="auth-only" href="/profile/">Profil</a>
             <a href="#">Messages</a>
-            <a href="#">Recherche</a>
+            <a href="#" id="search-open">Recherche</a>
             <a class="guest-only" href="/login/">Se connecter</a>
             <a class="guest-only" href="/register/">S'inscrire</a>
         </nav>
-        <button class="truitr-logout auth-only" onclick="logoutUser()">Déconnexion</button>
+
+        <button class="truitr-logout auth-only" id="logout-btn">Déconnexion</button>
     </aside>
 
     <section class="truitr-main">
         <header class="truitr-header">
             <h1>Accueil</h1>
             <p>Posts, images, réactions et commentaires</p>
+            <div class="header-actions auth-only">
+                <button type="button" id="search-open-btn" class="header-action-btn">Recherche</button>
+                <button type="button" id="notifications-open-btn" class="header-action-btn notification-btn">
+                    🔔 <span id="notifications-count" style="display:none;">0</span>
+                </button>
+            </div>
         </header>
+
+        <button type="button" id="toggle-post-form" class="auth-only">
+            + Nouveau post
+        </button>
 
         <section class="composer auth-only">
             <form id="post-form">
                 <textarea id="post-content" name="content" maxlength="2000" placeholder="Quoi de neuf, robot ?" required></textarea>
+
                 <div class="composer-actions">
                     <label class="file-label">
-                        <input id="post-image" name="image" type="file" accept="image/*" required>
-                        <span>Ajouter une image obligatoire</span>
+                        <input id="post-image" name="image" type="file" accept="image/*">
+                        <span>Ajouter une image</span>
                     </label>
+
+                    <button type="button" id="generate_post_image">
+                        Image IA
+                    </button>
+
                     <button type="submit">Publier</button>
                 </div>
+
                 <p id="post-form-message" class="form-message"></p>
             </form>
         </section>
@@ -64,5 +88,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/feed.js' %}?v=90"></script>
+<script src="{% static 'js/social_tools.js' %}?v=120"></script>
+<script src="{% static 'js/feed.js' %}?v=120"></script>
 {% endblock %}

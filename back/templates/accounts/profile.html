@@ -4,54 +4,77 @@
 {% block title %}Profil - Truitr{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=92">
+<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=120">
 {% endblock %}
 
 {% block content %}
 <main class="truitr-page">
     <aside class="truitr-sidebar">
-        <div class="truitr-logo">Truitr</div>
+        <div class="truitr-logo">
+            <span class="truitr-logo-mark">
+                <img src="{% static 'images/favicon.png' %}" alt="Truitr logo">
+            </span>
+
+            <span>Truitr</span>
+        </div>
+
         <nav class="truitr-menu">
             <a href="/">Accueil</a>
             <a class="active auth-only" href="/profile/">Profil</a>
             <a href="#">Messages</a>
-            <a href="#">Recherche</a>
+            <a href="#" id="search-open">Recherche</a>
             <a class="guest-only" href="/login/">Se connecter</a>
             <a class="guest-only" href="/register/">S'inscrire</a>
         </nav>
-        <button class="truitr-logout auth-only" onclick="logoutUser()">Déconnexion</button>
+
+        <button class="truitr-logout auth-only" id="logout-btn">Déconnexion</button>
     </aside>
 
     <section class="truitr-main">
         <header class="truitr-header">
             <h1>Profil</h1>
             <p id="user-handle">@{{ user.username }}</p>
+            <div class="header-actions auth-only">
+                <button type="button" id="search-open-btn" class="header-action-btn">Recherche</button>
+                <button type="button" id="notifications-open-btn" class="header-action-btn notification-btn">
+                    🔔 <span id="notifications-count" style="display:none;">0</span>
+                </button>
+            </div>
         </header>
 
         <section class="profile-card-clean">
-            <div class="profile-cover-clean"></div>
+            <div class="profile-cover-wrap">
+                <img
+                    id="profile-banner"
+                    class="profile-cover-clean"
+                    src=""
+                    alt="Bannière de profil"
+                >
+                <span class="profile-cover-hint self-profile-only auth-only">Changer la bannière</span>
+            </div>
+
             <div class="profile-info-clean">
-                <button id="generate_image">Générer une image de profil</button>
-                <img id="profile-img"
-                     class="profile-photo-clean"
-                     src="{% if user.profile_pic %}{{ user.profile_pic.url }}{% else %}/static/images/default-male-avatar.png{% endif %}"
-                     alt="Photo de profil">
+                <img
+                    id="profile-img"
+                    class="profile-photo-clean"
+                    src=""
+                    alt="Photo de profil"
+                >
+
                 <div class="profile-text-clean">
                     <h2 id="user-fullname">{{ user.get_full_name|default:user.username }}</h2>
                     <p id="user-email">{{ user.email }}</p>
                 </div>
 
-                <button id="edit-profile-btn"
-        class="btn-edit-profile self-profile-only auth-only">
-    Modifier le profil
-</button>
+                <button id="edit-profile-btn" class="btn-edit-profile self-profile-only auth-only">
+                    Modifier le profil
+                </button>
 
-                <button id="profile-follow-btn"
-                        class="follow-btn other-profile-only"
-                        onclick="toggleFollow()">
+                <button id="profile-follow-btn" class="follow-btn other-profile-only" onclick="toggleFollow()">
                     Suivre
                 </button>
             </div>
+
             <div class="profile-stats-clean">
                 <div><strong id="posts-count">0</strong><span>Posts</span></div>
                 <div><strong id="followers-count">0</strong><span>Abonnés</span></div>
@@ -60,67 +83,80 @@
         </section>
 
         <section class="profile-edit-section self-profile-only auth-only">
+            <form class="profile-edit-form" id="profile-edit-form">
+                <div class="form-group">
+                    <label>Nom d'utilisateur</label>
+                    <input id="edit-username" name="username" type="text">
+                </div>
 
-    <form class="profile-edit-form" id="profile-edit-form">
+                <div class="form-group">
+                    <label>Prénom</label>
+                    <input id="edit-first_name" name="first_name" type="text">
+                </div>
 
-        <div class="form-group">
-            <label>Nom d'utilisateur</label>
-            <input id="edit-username" name="username" type="text">
-        </div>
+                <div class="form-group">
+                    <label>Nom</label>
+                    <input id="edit-last_name" name="last_name" type="text">
+                </div>
 
-        <div class="form-group">
-            <label>Prénom</label>
-            <input id="edit-first_name" name="first_name" type="text">
-        </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input id="edit-email" name="email" type="email">
+                </div>
 
-        <div class="form-group">
-            <label>Nom</label>
-            <input id="edit-last_name" name="last_name" type="text">
-        </div>
+                <div class="form-group">
+                    <label>Sexe</label>
+                    <select id="edit-sex" name="sex">
+                        <option value="male">Homme</option>
+                        <option value="female">Femme</option>
+                        <option value="other">Autre</option>
+                    </select>
+                </div>
 
-        <div class="form-group">
-            <label>Email</label>
-            <input id="edit-email" name="email" type="email">
-        </div>
+                <div class="form-group">
+                    <label>Date de naissance</label>
+                    <input id="edit-birth_date" name="birth_date" type="date">
+                </div>
 
-        <div class="form-group">
-            <label>Sexe</label>
-            <select id="edit-sex" name="sex">
-                <option value="male">Homme</option>
-                <option value="female">Femme</option>
-                <option value="female">Autre</option>
-            </select>
-        </div>
+                <div class="form-group">
+                    <label>Photo de profil</label>
+                    <input type="file" id="edit-avatar" name="profile_pic" accept="image/*">
+                </div>
 
-        <div class="form-group">
-            <label>Date de naissance</label>
-            <input id="edit-birth_date" name="birth_date" type="date">
-        </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">Enregistrer</button>
+                    <button type="button" class="btn-reset" onclick="toggleEditProfile()">Annuler</button>
+                </div>
+            </form>
+        </section>
 
-        <div class="form-group">
-            <label>Photo de profil</label>
-            <input type="file" id="edit-avatar" name="profile_pic">
-        </div>
+        <button type="button" id="toggle-post-form" class="self-profile-only auth-only">
+            + Nouveau post
+        </button>
 
-        <div class="form-actions">
-            <button type="submit" class="btn-save">Enregistrer</button>
-            <button type="button" class="btn-reset" onclick="toggleEditProfile()">Annuler</button>
-        </div>
-
-    </form>
-</section>
-        <!-- Composer de post -->
         <section class="composer self-profile-only auth-only">
             <form id="profile-post-form">
-                <textarea id="profile-post-content" name="content" maxlength="2000"
-                          placeholder="Publier depuis mon profil..." required></textarea>
+                <textarea
+                    id="profile-post-content"
+                    name="content"
+                    maxlength="2000"
+                    placeholder="Publier depuis mon profil..."
+                    required
+                ></textarea>
+
                 <div class="composer-actions">
                     <label class="file-label">
-                        <input id="profile-post-image" name="image" type="file" accept="image/*" required>
-                        <span>Ajouter une image obligatoire</span>
+                        <input id="profile-post-image" name="image" type="file" accept="image/*">
+                        <span>Ajouter une image</span>
                     </label>
+
+                    <button type="button" id="generate_post_image">
+                        Image IA
+                    </button>
+
                     <button type="submit">Publier</button>
                 </div>
+
                 <p id="profile-post-form-message" class="form-message"></p>
             </form>
         </section>
@@ -138,5 +174,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/profile.js' %}?v=95"></script>
+<script src="{% static 'js/social_tools.js' %}?v=120"></script>
+<script src="{% static 'js/profile.js' %}?v=120"></script>
 {% endblock %}

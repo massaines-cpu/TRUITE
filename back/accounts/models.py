@@ -16,6 +16,11 @@ class User(AbstractUser):
         upload_to="profiles/",
         default="profiles/default.png"
     )
+    banner_image = models.ImageField(
+        blank=True,
+        null=True,
+        upload_to="profiles/banners/"
+    )
     birth_date = models.DateField(blank=True, null=True)
 
     def save(self, *args, **kwargs):

@@ -3,9 +3,8 @@ from rest_framework import serializers
 from reactions.models import ReactionType
 from .models import Comment, Post
 
-ACTIVE_REACTIONS = list(
-    ReactionType.objects.filter(is_active=True)
-)
+def get_active_reactions():
+    return ReactionType.objects.filter(is_active=True)
 
 class AuthorSerializerMixin(serializers.Serializer):
     author_id = serializers.IntegerField(source="author.id", read_only=True)
@@ -54,7 +53,7 @@ class CommentSerializer(serializers.ModelSerializer):
         ]
 
     def get_reactions_summary(self, obj):
-        summary = {reaction.slug: 0 for reaction in ACTIVE_REACTIONS}
+        summary = {reaction.slug: 0 for reaction in get_active_reactions()}
         for reaction in obj.reactions.select_related("reaction_type").all():
             summary[reaction.reaction_type.slug] = summary.get(reaction.reaction_type.slug, 0) + 1
         return summary
@@ -132,7 +131,7 @@ class PostSerializer(serializers.ModelSerializer):
         return obj.comments.count()
 
     def get_reactions_summary(self, obj):
-        summary = {reaction.slug: 0 for reaction in ACTIVE_REACTIONS}
+        summary = {reaction.slug: 0 for reaction in get_active_reactions()}
         for reaction in obj.reactions.select_related("reaction_type").all():
             summary[reaction.reaction_type.slug] = summary.get(reaction.reaction_type.slug, 0) + 1
         return summary

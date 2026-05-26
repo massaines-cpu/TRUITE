@@ -9,6 +9,24 @@ from posts.models import Comment, Post
 from posts.serializers import CommentSerializer, PostSerializer
 from .models import CommentReaction, PostReaction, ReactionType
 from .serializers import ReactionTypeSerializer
+from notifications.models import Notification
+from notifications.services import create_notification
+
+DEFAULT_REACTION_TYPES = [
+    ("like", "J'aime", "👍"),
+    ("love", "J'adore", "❤️"),
+    ("funny", "Drôle", "😂"),
+    ("dislike", "Je déteste", "👎"),
+    ("not_interested", "Ça ne m'intéresse pas", "😐"),
+]
+
+
+def ensure_default_reaction_types():
+    for slug, label, emoji in DEFAULT_REACTION_TYPES:
+        ReactionType.objects.get_or_create(
+            slug=slug,
+            defaults={"label": label, "emoji": emoji, "is_active": True}
+        )
 
 
 def get_current_user(request):
@@ -47,6 +65,7 @@ def get_reaction_type(request):
 
 @api_view(["GET"])
 def reaction_types(request):
+    ensure_default_reaction_types()
     reactions = ReactionType.objects.filter(is_active=True)
     serializer = ReactionTypeSerializer(reactions, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -58,6 +77,7 @@ def react_to_post(request, post_id):
     if not user:
         return Response({"error": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
 
+    ensure_default_reaction_types()
     post = get_object_or_404(Post, id=post_id)
     reaction_type = get_reaction_type(request)
 
@@ -77,6 +97,15 @@ def react_to_post(request, post_id):
         PostReaction.objects.create(post=post, user=user, reaction_type=reaction_type)
         selected = reaction_type.slug
 
+    if selected:
+        create_notification(
+            receiver=post.author,
+            sender=user,
+            notification_type=Notification.TYPE_REACTION,
+            message=f"{user.username} a réagi à votre post.",
+            post=post,
+        )
+
     serializer = PostSerializer(post, context={"request": request, "user": user})
     return Response({"selected": selected, "post": serializer.data}, status=status.HTTP_200_OK)
 
@@ -87,6 +116,7 @@ def react_to_comment(request, comment_id):
     if not user:
         return Response({"error": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
 
+    ensure_default_reaction_types()
     comment = get_object_or_404(Comment, id=comment_id)
     reaction_type = get_reaction_type(request)
 
@@ -105,6 +135,16 @@ def react_to_comment(request, comment_id):
     else:
         CommentReaction.objects.create(comment=comment, user=user, reaction_type=reaction_type)
         selected = reaction_type.slug
+
+    if selected:
+        create_notification(
+            receiver=comment.author,
+            sender=user,
+            notification_type=Notification.TYPE_REACTION,
+            message=f"{user.username} a réagi à votre commentaire.",
+            post=comment.post,
+            comment=comment,
+        )
 
     serializer = CommentSerializer(comment, context={"request": request, "user": user})
     return Response({"selected": selected, "comment": serializer.data}, status=status.HTTP_200_OK)
