@@ -410,7 +410,7 @@ function renderPost(post) {
                 </div>
 
                 <p class="post-text ${isMyPost ? "editable-post-text" : ""}" onclick="${isMyPost ? `openEditPost(${post.id})` : ""}">
-                    ${escapeHtml(post.content)}
+                    ${escapeHtml(post.content.trim())}
                 </p>
 
                 ${post.image ? `
@@ -424,7 +424,7 @@ function renderPost(post) {
 
                 ${isMyPost ? `
                     <div class="edit-post-box" id="edit-box-${post.id}" style="display:none;">
-                        <textarea id="edit-content-${post.id}">${escapeHtml(post.content)}</textarea>
+                        <textarea id="edit-content-${post.id}">${escapeHtml(post.content.trim())}</textarea>
                         <input type="file" id="edit-image-${post.id}" accept="image/*">
 
                         <div class="edit-actions">
