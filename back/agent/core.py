@@ -56,8 +56,11 @@ def run_truite_agent(query: str) -> dict:
     """
     
     agent_executor = create_react_agent(llm, tools=truite_tools)
-    raw_response = agent_executor.invoke({"messages": [SystemMessage(content=system_prompt), HumanMessage(content=query)]})
-    final_message = raw_response["messages"][-1].content
+    try:
+        raw_response = agent_executor.invoke({"messages": [SystemMessage(content=system_prompt), HumanMessage(content=query)]})
+        final_message = raw_response["messages"][-1].content
+    except Exception as e:
+        final_message = f'{{"topic": "Erreur d\'exécution", "summary": "L\'agent a rencontré un problème technique (ex: blocage réseau ou erreur Azure OpenAI). Détail: {str(e)}", "sources": []}}'
     
     try:
         return parser.parse(final_message).model_dump()

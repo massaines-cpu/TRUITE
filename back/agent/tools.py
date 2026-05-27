@@ -25,21 +25,30 @@ wiki_tool = WikipediaQueryRun(
 # ==========================================
 def get_dolphin_bot():
     """Récupère ou crée l'unique bot DolphinTales avec tous les attributs requis."""
+    user_fields = [f.name for f in User._meta.fields]
+    
+    defaults = {
+        "email": "dolphintales@truite.local",
+        "first_name": "Bot",  # Important : empêche la boucle infinie de commentaires
+        "last_name": "DolphinTales",
+        "sex": "M" # Valeur factice requise par vos modèles
+    }
+    
+    # Ajout dynamique pour s'adapter au merge des autres développeurs
+    if "profile_pic" in user_fields:
+        defaults["profile_pic"] = "images/profiles/dolphin_robot.jpg"
+    if "birth_date" in user_fields:
+        defaults["birth_date"] = "2024-01-01"
+    if "password_hash" in user_fields:
+        defaults["password_hash"] = "DolphinRobot2024!"
+
     bot_user, created = User.objects.get_or_create(
         username="DolphinTales",
-        defaults={
-            "email": "dolphintales@truite.local",
-            "first_name": "Bot",  # Important : empêche la boucle infinie de commentaires dans posts/views.py
-            "last_name": "DolphinTales",
-            "profile_pic": "images/profiles/dolphin_robot.jpg",  # Assurez-vous d'avoir cette image dans /media
-            "sex": "M" # Valeur factice requise par vos modèles
-        }
+        defaults=defaults
     )
     if created:
         # Assigne un vrai hash de mot de passe de manière standard à Django pour éviter les bugs Azure
         bot_user.set_password("DolphinRobot2024!")
-        if hasattr(bot_user, 'birth_date'):
-            bot_user.birth_date = "2024-01-01"
         bot_user.save()
     return bot_user
 
@@ -47,8 +56,14 @@ def get_dolphin_bot():
 def create_truite_post(content: str) -> str:
     """Sauvegarde la recherche sous forme de Post TRUITE. Fournir uniquement 'content'."""
     bot_user = get_dolphin_bot()
-    # Attribution d'une image obligatoire pour imiter un compte normal et ne pas faire crasher le Serializer
-    post = Post.objects.create(author=bot_user, content=content, image="images/profiles/dolphin_robot.jpg")
+    
+    post_kwargs = {"author": bot_user, "content": content}
+    post_fields = [f.name for f in Post._meta.fields]
+    
+    if "image" in post_fields:
+        post_kwargs["image"] = "images/profiles/dolphin_robot.jpg"
+        
+    post = Post.objects.create(**post_kwargs)
     return f"Le post a été publié avec succès par {bot_user.username} avec l'ID {post.id}."
 
 @tool

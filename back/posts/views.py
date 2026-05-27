@@ -4,6 +4,7 @@ from datetime import timedelta
 from rest_framework import status
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -43,6 +44,7 @@ def serializer_context(request):
 
 
 @api_view(["GET", "POST"])
+@parser_classes([MultiPartParser, FormParser, JSONParser])
 def posts_list_create(request):
     user = get_current_user(request)
 
@@ -89,6 +91,10 @@ def posts_list_create(request):
 
     post = Post.objects.create(author=user, content=content, image=image)
     notify_mentions(content, sender=user, post=post)
+
+    # Déclencher l'agent IA automatiquement (sauf si c'est déjà le bot qui poste)
+    if user.username != "DolphinTales":
+        trigger_automatic_comment(post.id, post.content)
 
     serializer = PostSerializer(post, context={"request": request, "user": user})
     return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -188,6 +194,7 @@ def create_reply(request, comment_id):
 
 
 @api_view(["PATCH"])
+@parser_classes([MultiPartParser, FormParser, JSONParser])
 def update_post(request, post_id):
     user = get_current_user(request)
 
